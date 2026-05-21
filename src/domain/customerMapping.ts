@@ -302,6 +302,108 @@ export const STATIC_CUSTOMERS: string[] = [
 ];
 
 /**
+ * Static PCS product list in exact order as chuan.xlsx SKU review worksheet.
+ */
+export const STATIC_PCS_PRODUCTS: (string | null)[] = [
+  "Collagen 6in1 Springleaf Inner 60v",
+  "Collagen 6in1 Springleaf Inner 90v",
+  "Collagen 6in1 Springleaf Inner 180v",
+  "Gấu bông mầm",
+  "Túi vải Springleaf",
+  "Liver detox - Viên uống thải độc gan Springleaf 120v",
+  "Garlic oil - Tinh Dầu Tỏi SpringLeaf 3000mg 360v",
+  "Fish oil Kids - Dầu Cá SpringLeaf 750mg 120 viên",
+  "Evening Primrose Oil -Tinh Dầu Hoa Anh Thảo 1000mg 180v",
+  "Evening Primrose Oil -Tinh Dầu Hoa Anh Thảo 1000mg 90v",
+  "Colostrum Powder - Bột Sữa Bò Non SpringLeaf 400g",
+  "Kids mega milky Calcium - Canxi Sữa SpringLeaf 120v",
+  "SpringLeaf Canxi -Vitamin D3 200 viên",
+  "Gấu bông vịt vàng",
+  "Fish oil Kids - Dầu Cá SpringLeaf 750mg 60 viên",
+  "Kids mega milky Calcium - Canxi Sữa SpringLeaf 60v",
+  "SpringLeaf Canxi -Vitamin D3 60 viên",
+  "Phí ship",
+  `Manuka Honey MGO 550+
+Mật ong Manuka MGO 550+ (250g)`,
+  `Manuka Honey MGO 250+
+Mật ong Manuka MGO 250+ (250g)`,
+  "Liver detox - Viên uống thải độc gan Springleaf 60v",
+  "Mầm Đậu Nành Lecithin Springleaf 1200mg",
+  "Phí vận hành",
+  "Set tô màu kids",
+  "Placenta 80 000mg - Nhau thai cừu 90 viên",
+  "Placenta 60 000mg - Nhau thai cừu 120 viên",
+  "Kẹo dẻo bổ mắt Lutein 200g, 80 viên (màu xanh - new flavour)",
+  "Kẹo dẻo bổ mắt Lutein 150g, 60 viên (vị xoài dứa)",
+  "Kẹo dẻo SpringLeaf Kids Probiotic - Lợi khuẩn cho bé (80 viên)",
+  `Manuka Honey MGO 20+
+Mật ong Manuka MGO 20+ (250g)`,
+  "Dầu Nhuyễn Thể Nam Cực Đỏ Phức Hợp- Krill Oil 700mg (60 viên)",
+  "Viên uống Omega 369 180 viên",
+];
+
+/**
+ * Static VND product list in exact order as chuan.xlsx SKU review worksheet.
+ */
+export const STATIC_VND_PRODUCTS: (string | null)[] = [
+  "Fish oil Kids - Dầu Cá SpringLeaf 750mg 60 viên",
+  "Kids mega milky Calcium - Canxi Sữa SpringLeaf 60v",
+  "Evening Primrose Oil -Tinh Dầu Hoa Anh Thảo 1000mg 90v",
+  "Collagen 6in1 Springleaf Inner 60v",
+  "Garlic oil - Tinh Dầu Tỏi SpringLeaf 3000mg 360v",
+  "SpringLeaf Canxi -Vitamin D3 200 viên",
+  "Liver detox - Viên uống thải độc gan Springleaf 120v",
+  "Evening Primrose Oil -Tinh Dầu Hoa Anh Thảo 1000mg 180v",
+  "SpringLeaf Canxi -Vitamin D3 60 viên",
+  "Dầu Nhuyễn Thể Nam Cực Đỏ Phức Hợp- Krill Oil 700mg (60 viên)",
+  "Liver detox - Viên uống thải độc gan Springleaf 60v",
+  "Gấu bông vịt vàng",
+  "Túi vải Springleaf",
+  "Kids mega milky Calcium - Canxi Sữa SpringLeaf 120v",
+  "Fish oil Kids - Dầu Cá SpringLeaf 750mg 120 viên",
+  "Kẹo dẻo bổ mắt Lutein 150g, 60 viên (vị xoài dứa)",
+  "Viên uống Omega 369 180 viên",
+  "Placenta 60 000mg - Nhau thai cừu 120 viên",
+  "Colostrum Powder - Bột Sữa Bò Non SpringLeaf 400g",
+  "Chiết khấu trực tiếp - Collagen 6in1 60 viên",
+  "Collagen 6in1 Springleaf Inner 90v",
+  "Chiết khấu trực tiếp - Collagen 6in1 90 viên",
+  "Chiết khấu trực tiếp - Combo cặp kids 120 viên",
+  "Thưởng tích lũy năm 2024 (9%)",
+  "Chiết khấu trực tiếp - Combo cặp kids 60 viên",
+  `Manuka Honey MGO 20+
+Mật ong Manuka MGO 20+ (250g)`,
+  `Manuka Honey MGO 250+
+Mật ong Manuka MGO 250+ (250g)`,
+  `Manuka Honey MGO 550+
+Mật ong Manuka MGO 550+ (250g)`,
+  "Chiết khấu trực tiếp - Combo Xinh đẹp rạng rỡ",
+  "Gấu bông mầm",
+  "Chiết khấu trực tiếp - Combo Kids 60 viên",
+  "Mầm Đậu Nành Lecithin Springleaf 1200mg",
+  "Chiết khấu trực tiếp Collagen 6in1 60 viên",
+  "Chiết khấu trực tiếp - Combo Kids 120 viên",
+  "Chiết khấu trực tiếp Evening Primrose Oil 90 viên",
+  "Phí ship",
+  "Set tô màu kids",
+  "Collagen 6in1 Springleaf Inner 180v",
+  "Kẹo dẻo bổ mắt Lutein 200g, 80 viên (màu xanh - new flavour)",
+  "Voucher 1",
+  "Voucher 2",
+  "Voucher 3",
+  "Kẹo dẻo SpringLeaf Kids Probiotic - Lợi khuẩn cho bé (80 viên)",
+  "Placenta 80 000mg - Nhau thai cừu 90 viên",
+  null,
+  "Phí ship hàng bổ sung",
+  "SpringLeaf Canxi -Vitamin D3 60 viên",
+  "Garlic oil - Tinh Dầu Tỏi SpringLeaf 3000mg 360v (tặng)",
+  "Garlic oil - Tinh Dầu Tỏi SpringLeaf 3000mg 360v (Date 2025)",
+  "Gấu bông",
+  "Garlic oil - Tinh Dầu Tỏi SpringLeaf 3000mg 360v (hàng tặng)",
+  "Garlic oil - Tinh Dầu Tỏi SpringLeaf 3000mg 360v (hàng bán)",
+];
+
+/**
  * Static customer → segment mapping extracted from chuan.xlsx QEC review (row 29+).
  * 296 unique customers mapped to their business segment.
  */

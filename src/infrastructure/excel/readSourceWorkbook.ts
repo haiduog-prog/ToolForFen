@@ -162,9 +162,15 @@ function detectMonthColumn(
   for (const column of candidates) {
     let score = 0;
     for (let rowNumber = headerRow + 1; rowNumber <= Math.min(headerRow + 50, worksheet.rowCount); rowNumber += 1) {
-      const month = parseMonthFromCell(worksheet.getRow(rowNumber).getCell(column));
+      const cell = worksheet.getRow(rowNumber).getCell(column);
+      const val = cell.value;
+      const month = parseMonthFromCell(cell);
       if (month) {
         score += 1;
+        // Prioritize dedicated Month columns (storing YYYY-MM strings) over Date columns
+        if (typeof val === "string" && /^\d{4}\s*[-/]\s*\d{1,2}$/.test(val.trim())) {
+          score += 0.1;
+        }
       }
     }
 

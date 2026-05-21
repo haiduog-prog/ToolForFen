@@ -56,7 +56,9 @@ describe("writeReportWorkbook", () => {
       },
       qecRows: [],
       dsrRows: [],
+      customerBaseRows: [],
       skuRevenueRows: [],
+      skuQuantityRows: [],
       customerRevenueSections: [],
       customerQuantitySections: []
     };

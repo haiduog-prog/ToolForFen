@@ -1,6 +1,8 @@
 import fs from 'fs';
 
 const raw = JSON.parse(fs.readFileSync('d:\\Work\\ToolsForFen\\customer_mappings.json', 'utf8'));
+const pcsProds = JSON.parse(fs.readFileSync('d:\\Work\\ToolsForFen\\scratch_pcs_products.json', 'utf8'));
+const vndProds = JSON.parse(fs.readFileSync('d:\\Work\\ToolsForFen\\scratch_vnd_products.json', 'utf8'));
 
 // Filter out TOTAL and empty entries
 const entries = raw.filter(e => e.customer && e.customer !== 'TOTAL' && e.segment);
@@ -15,6 +17,34 @@ lines.push('export const STATIC_CUSTOMERS: string[] = [');
 for (const entry of entries) {
   const escaped = entry.customer.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
   lines.push(`  "${escaped}",`);
+}
+lines.push('];');
+lines.push('');
+lines.push('/**');
+lines.push(' * Static PCS product list in exact order as chuan.xlsx SKU review worksheet.');
+lines.push(' */');
+lines.push('export const STATIC_PCS_PRODUCTS: (string | null)[] = [');
+for (const p of pcsProds) {
+  if (p === null) {
+    lines.push('  null,');
+  } else {
+    const escaped = p.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+    lines.push(`  "${escaped}",`);
+  }
+}
+lines.push('];');
+lines.push('');
+lines.push('/**');
+lines.push(' * Static VND product list in exact order as chuan.xlsx SKU review worksheet.');
+lines.push(' */');
+lines.push('export const STATIC_VND_PRODUCTS: (string | null)[] = [');
+for (const p of vndProds) {
+  if (p === null) {
+    lines.push('  null,');
+  } else {
+    const escaped = p.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+    lines.push(`  "${escaped}",`);
+  }
 }
 lines.push('];');
 lines.push('');
@@ -84,4 +114,4 @@ lines.push('}');
 lines.push('');
 
 fs.writeFileSync('d:\\Work\\ToolsForFen\\src\\domain\\customerMapping.ts', lines.join('\n') + '\n', 'utf8');
-console.log(`Generated customerMapping.ts with ${entries.length} customer entries and STATIC_CUSTOMERS list.`);
+console.log(`Generated customerMapping.ts with customers, PCS products, and VND products lists.`);

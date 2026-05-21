@@ -4,25 +4,26 @@ async function main() {
   const wb = new ExcelJS.Workbook();
   await wb.xlsx.readFile('d:\\Work\\ToolsForFen\\chuan.xlsx');
   
-  const sku = wb.getWorksheet('SKU review');
+  const sheet = wb.getWorksheet('SKU - Customer review');
+  console.log('Total rows in SKU - Customer review:', sheet.rowCount);
   
-  console.log('=== ROW 2 CELLS (1-30) ===');
-  const r2 = sku.getRow(2);
-  for (let c = 1; c <= 30; c++) {
-    const val = r2.getCell(c).value;
-    if (val !== null) {
-      console.log(`Col ${c}: ${JSON.stringify(val)}`);
+  let validSkuRows = 0;
+  const otherCustomers = new Set();
+  
+  for (let r = 2; r <= sheet.rowCount; r++) {
+    const row = sheet.getRow(r);
+    const c2 = row.getCell(2).value;
+    const c4 = row.getCell(4).value;
+    if (c4 !== null) {
+      validSkuRows++;
+    }
+    if (c2 !== null) {
+      otherCustomers.add(c2);
     }
   }
-
-  console.log('\n=== ROW 37 CELLS (1-30) ===');
-  const r37 = sku.getRow(37);
-  for (let c = 1; c <= 30; c++) {
-    const val = r37.getCell(c).value;
-    if (val !== null) {
-      console.log(`Col ${c}: ${JSON.stringify(val)}`);
-    }
-  }
+  
+  console.log('Valid SKU rows (Col 4 not null):', validSkuRows);
+  console.log('Other customer names found in Col 2 (rows 2+):', [...otherCustomers]);
 }
 
 main().catch(err => console.error(err));
