@@ -1,0 +1,2074 @@
+[
+  {
+    "customer": "Guardian",
+    "segment": "MT",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Pharmadi (kho Sài Gòn 1)",
+    "segment": "WS",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Phòng Khám Đa Khoa Quốc Tế CHAC",
+    "segment": "ETC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Công ty Cổ phần Sóc Đỏ",
+    "segment": "Ecom",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Waston",
+    "segment": "MT",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Nhà thuốc An Khang (Kho AK Long Hậu)",
+    "segment": "AK",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Nhà thuốc An Khang (Kho AK Trà Nóc)",
+    "segment": "AK",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Công ty Dược phẩm Mạnh Tý",
+    "segment": "OTC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Gourmet Shop Estella",
+    "segment": "MT",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Duy Phương",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Shop Knguyen",
+    "segment": "B&M",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Nhà thuốc Đức Lan",
+    "segment": "OTC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Nhà thuốc số 2",
+    "segment": "OTC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "OTC anh Đức",
+    "segment": "WS",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Gourmet Shop Q2 Terrace",
+    "segment": "MT",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Pharmadi (kho Hà Nội)",
+    "segment": "WS",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Công ty CPTM và Phân Phối Hướng Dương",
+    "segment": "WS",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Gourmet Shop Saigon Centre",
+    "segment": "MT",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Chị Nhung (ĐTĐ)",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Medicare",
+    "segment": "MT",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Bibomart",
+    "segment": "MT",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Quầy thuốc Minh Phương",
+    "segment": "OTC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Gourmet Shop An Phú",
+    "segment": "MT",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Chị Nhung Yanhee",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "An Bé Bé (Bình Lâm)",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Công ty TNHH Dược Phẩm Thành Sen",
+    "segment": "OTC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Nhím Store",
+    "segment": "B&M",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Gourmet Shop Hà Nội",
+    "segment": "MT",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách hàng (Cảnh)",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Vườn của bé",
+    "segment": "B&M",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Con Cưng Office",
+    "segment": "B&M",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Công ty TNHH Thực Phẩm - Mỹ Phẩm Nhật Việt",
+    "segment": "Ecom",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Em Cảnh",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Bác sĩ Oanh",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Aeon Mall",
+    "segment": "MT",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Thanh Tuyền",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Bùi Đan",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Quốc Thy",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Nguyễn Tường Vy",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Mai An",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Cao thị Bích Phượng",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Nguyễn Khánh",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Nguyễn Khánh (1)",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Bạch Văn Luận",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Phan Hà Trang",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Nguyễn Thị Tường Vi",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Nguyễn Huỳnh Minh Thư",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Nhà thuốc An Khang (Kho AK Bến Tre)",
+    "segment": "AK",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Thơm Giang",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Phương",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Cao Thị Mùi",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Phùng Thanh Huyền",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Nguyễn Thị Huyền",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Chloe Nguyen",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Cả ngỗ Vui Khỏe",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Trần Thúy",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Nguyễn Khánh Vy",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Trần Minh Thu",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Minh Thùy",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Phạm Phương Anh",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Trần Thư",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Phương Trần",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Đỗ Thị Diệu",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Hoàng Thị Tâm",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Thanh Thanh",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: An Nhiên",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Na Na",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Mai Lee",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Thanh Hiền",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Đào Thị Lan (3)",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Linh Sunny",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: An An",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Tú Uyên",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Nguyễn Trần Thục Uyên",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Nguyễn Đồng Đồng",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Nguyễn Thị Kim",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Đan Linh",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Nguyễn Thanh Huyền",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Đặng Hương",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Hoàng Yến",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Nguyễn Thị Minh Hằng",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Nguyễn Trang",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Anh Tùng",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Quầy thuốc Kim Phương",
+    "segment": "OTC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Công ty TNHH Thương mại dược phẩm Thanh Phương",
+    "segment": "OTC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Em Mai (nhân viên)",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Phương Linh",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Nguyễn Thu Trang",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Lan",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Nguyễn Thu Trang (1)",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Ngân Hoàng",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Tuyên Be",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Hà Huyền My",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Nguyễn Hồng Thanh",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Tùng",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Thu Trang",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Mai Anh",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Hải Yến",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Hải Đinh",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Anna Trần",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Quyen Do",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Phùng Thư",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Nguyễn Huyền",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Pham Cừu Anh",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Thùy Dương",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Lê Ngân",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Duyên",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Mai Huyền",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Trần Hoà",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Thuỳ Dương (1)",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Trần Tú Anh",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Phạm Thanh Huyền",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Nguyễn Thương",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Vũ Thắm",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Nguyễn Sương",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Công Ty TNHH TM Dược Phẩm Bảo Bình",
+    "segment": "OTC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Nhà thuốc An Khang (Hub)",
+    "segment": "AK",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Nhà Thuốc Trường Giang",
+    "segment": "OTC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Ếch cốm (Tổng)",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Nhà thuốc Thắng Hương",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Nhà thuốc Đỗ Chí Thành",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Nhà thuốc Minh Anh IV",
+    "segment": "OTC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Công ty TNHH Phát triển thương mại Trần Gia",
+    "segment": "Ecom",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Công ty Cổ Phần Thế Giới Di Động (Ava_HCM - Kho Ava World Tân Bình)",
+    "segment": "B&M",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Nhà thuốc GPP Minh Châu",
+    "segment": "OTC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Nhà thuốc Nhị Trưng",
+    "segment": "OTC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Nhà Thuốc Mỹ Duyên",
+    "segment": "OTC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Kim Hiền Baby",
+    "segment": "B&M",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Thuế",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Tạ Chiêu An (nhân viên)",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Nhà phân phối Thành Văn",
+    "segment": "WS",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Careace",
+    "segment": "OTC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Nhà thuốc An Khang - Phú Quốc",
+    "segment": "OTC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Lê Thị Mỹ Dung",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Nguyễn Tuyết Nhi",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Trần Thị Thu Trang",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Nguyễn  Thanh Vỹ",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Uyên (nhân viên)",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Kỳ Duyên Beauty Store",
+    "segment": "KEY",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Shop Khang Baby",
+    "segment": "B&M",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Nhà thuốc Quỳnh Thi",
+    "segment": "OTC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "anh Minh (MKT)",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Nhà thuốc Phước Thiện",
+    "segment": "OTC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Phòng khám nội tiêu hóa gan mật Bác sĩ Thuận",
+    "segment": "ETC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Phòng mạch Bác sĩ Anh Thư",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Bun Bếp Quán",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Em Liên (nhân viên công ty)",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Top Milk",
+    "segment": "B&M",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ: Nhung Nguyễn",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ: Thùy Dung",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Nhà phân phối Hoàng Hải - Vĩnh Phúc",
+    "segment": "WS",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Tin’s House Phú Quốc",
+    "segment": "B&M",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Nhà Thuốc Kim Anh 2",
+    "segment": "OTC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ: Như Quỳnh",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Linh Khánh",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Đào Thị Lan (1)",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Sang Thúy My",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Bống Bi",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Shop Knguyen (Đan Phượng)",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Guardian (PO)",
+    "segment": "MT",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Hộ kinh doanh Vũ Thị Hòa (WS Ngọc Trâm)",
+    "segment": "WS",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Triết Minh (nhân viên)",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Annam Gourmet Hai Bà Trưng",
+    "segment": "MT",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Alibaby",
+    "segment": "B&M",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Nhà thuốc An Khang (Kho AK Đà Nẵng)",
+    "segment": "AK",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ: Đào Châm (VNSHOP)",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Quầy Thuốc Sức Khỏe",
+    "segment": "OTC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Quân (nhân viên)",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Dola' House (Baby's Corner)",
+    "segment": "B&M",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Shop sữa Phương Anh",
+    "segment": "B&M",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Nhà thuốc Phương Linh",
+    "segment": "OTC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Nhà phân phối Nghệ An",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ: Tu Nguyen Khanh Trang (VNSHOP)",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ: Duy Tân (VNSHOP)",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Min (nhân viên)",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Mai Ly",
+    "segment": "Ecom",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ: Nguyễn Văn Thành (VNSHOP)",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "CTCT Thế Giới Di Động - Tòa nhà MWG",
+    "segment": "B&M",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "WS Như Trần Ngọc (cô Xuyến)",
+    "segment": "B&M",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Betty Baby",
+    "segment": "B&M",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Song Ngọc Phương Trâm",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Hà Vy",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Hương Đình",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Nhà thuốc Bạch Yến",
+    "segment": "OTC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Shop Babysun",
+    "segment": "B&M",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ: chị Hiền",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ: Vo Van Tinh (VNSHOP)",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ: Ohsaki (VNSHOP)",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ: Tân Trần (VNSHOP)",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Gourmet Shop Landmark 81",
+    "segment": "MT",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ: Lê Tấn Phát (VNSHOP)",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Nguyễn Chúc",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Nguyễn Phi Phục",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Shop Knguyen",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ: Nguyễn Nhung (VNSHOP)",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Nhà thuốc Vinpharmacy",
+    "segment": "OTC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Gourmet Shop Vincom Plaza Long Bien HN",
+    "segment": "MT",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Tuấn Bùi",
+    "segment": "Ecom",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Công ty Kim Sa Group",
+    "segment": "Ecom",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Nhà thuốc Thái Ngọc",
+    "segment": "OTC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Shop Thảo Nguyên",
+    "segment": "B&M",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ: Nguyễn Thị Hường (VNSHOP)",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Gourmet Shop Ascentia",
+    "segment": "MT",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Gourmet Shop Phú Mỹ Hưng",
+    "segment": "MT",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Gourmet Shop Feliz Vista",
+    "segment": "MT",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Dung Bubi",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Sunshine",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Vũ Thu Hường",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Đào Thị Lan",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Bảo An",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ trúng thưởng: Yến Yến",
+    "segment": "B&M",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Cộng tác viên: Trà Thanh Vân",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Med 247",
+    "segment": "ETC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Phòng khám Kokasi",
+    "segment": "ETC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Baby Mark - Trạm Thực Nghiệm",
+    "segment": "B&M",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "OTC Hiển Vinh - Vũng Tàu.",
+    "segment": "OTC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Cửa hàng Baby Thu Cầm",
+    "segment": "B&M",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Shop Hato Baby",
+    "segment": "B&M",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "OTC Trọng Nghĩa",
+    "segment": "OTC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Hàng PG",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Ếch Cốm 1 - Tân Mai - Hoàng Mai",
+    "segment": "B&M",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Nhà thuốc Hồng Việt",
+    "segment": "OTC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Subibin",
+    "segment": "WS",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Công ty CP Lebebee",
+    "segment": "B&M",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Võ Thị Hoài Thương",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ: Nguyễn Thị Giang Tâm (VNSHOP)",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ: Nguyễn Thiên Hương (VNSHOP)",
+    "segment": "B&M",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ: Vũ Hồng Loan (VNSHOP)",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Quầy thuốc 102",
+    "segment": "OTC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "chị Hà (nhân viên)",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Ngô Sỹ Hiệp",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Đỗ Văn Chính",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Suri",
+    "segment": "B&M",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ: Cao Thị Chính (Vnshop)",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Nhà phân phối Quảng Ninh",
+    "segment": "WS",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Thiên Hương Group",
+    "segment": "Ecom",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Công ty Cổ Phần Omicare",
+    "segment": "OTC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Anh Khải (Nhân viên công ty)",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ: Nguyễn Thùy Minh (Vnshop)",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Trung Sơn",
+    "segment": "MT",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Hải Yến",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Chuỗi Mẹ và bé Mỹ Linh An Giang",
+    "segment": "B&M",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Anh Tuấn (hàng Mẹ & Bé)",
+    "segment": "Ecom",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Cô Xuyến",
+    "segment": "B&M",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Nhà phân phối Nguyệt Hải",
+    "segment": "WS",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Nhà thuốc Tiến Trang",
+    "segment": "OTC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Mr Phúc",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Chuỗi Mint Cosmetic",
+    "segment": "H&B",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Nguyễn Anh Tuấn",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Dr. Rossie - Thực dưỡng khoẻ đẹp",
+    "segment": "OTC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Bệnh viện Vinmec",
+    "segment": "ETC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Công Ty TNHH Bảo Hưng Fruits",
+    "segment": "WS",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Thành Văn",
+    "segment": "WS",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Siêu thị Hùng Vương",
+    "segment": "ETC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Công ty TNHH & PP Mạch Huy",
+    "segment": "WS",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Hộ kinh doanh Vũ Thị Hòa",
+    "segment": "WS",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Phòng mạch Bác sĩ Thu Hậu",
+    "segment": "ETC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Chị My (nhóm Zalo)",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ: Lệ (VN Shop)",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Gourmet Shop Saigon Pearl",
+    "segment": "MT",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Con Cưng",
+    "segment": "MT",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Trần Gia",
+    "segment": "KEY",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách hàng lẻ: Đỗ Thị Cúc",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Nhà thuốc Phương Thảo",
+    "segment": "OTC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Kids Plaza",
+    "segment": "B&M",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Bibonmart",
+    "segment": "B&M",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "An Nam Bỉm Sữa (Nguyễn Văn Tiến)",
+    "segment": "B&M",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ: Chị Loan (Hải)",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Nhà thuốc Hoàng Lê",
+    "segment": "OTC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Nhà thuốc Minh Chính",
+    "segment": "OTC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Pharmadi",
+    "segment": "WS",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Nhà thuốc Thiên Đức",
+    "segment": "OTC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Nhà thuốc Mỹ Dung",
+    "segment": "OTC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Bệnh viện Hùng Vương",
+    "segment": "ETC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "An Khang",
+    "segment": "MT",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Quầy thuốc Thành Chi",
+    "segment": "OTC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Chưa có tên",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Hebela",
+    "segment": "Ecom",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Công ty Đồng Bằng",
+    "segment": "OTC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Nhà thuốc Nhân Tâm",
+    "segment": "OTC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Công ty TNHH Thương Mại Dịch Vụ Tổng Hợp Y Tế Tiến Thanh",
+    "segment": "ETC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Đoàn Trung Phú, Công Ty Cổ Phần Thế Giới Di Động",
+    "segment": "B&M",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Nhà thuốc Vân Chi",
+    "segment": "OTC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Công ty TNHH Lê Lâm Ngọc",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Phòng khám Đa Khoa Thuận Kiều",
+    "segment": "ETC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Nhà thuốc Khánh Vân",
+    "segment": "OTC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Công ty TNHH Dược phẩm Propharma",
+    "segment": "OTC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Bác sĩ Vinh Hoàng",
+    "segment": "ETC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ Nguyễn Quyết Chiến",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ Lê Thị Thanh Triều (VNSHOP)",
+    "segment": "Ecom",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Nhà thuốc Ngọc Tuyết",
+    "segment": "OTC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Khách lẻ (Cảnh)",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Quầy thuốc Hoài Tính",
+    "segment": "OTC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Chị Châu",
+    "segment": "IDP",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "Bác sĩ Nguyễn Văn Hậu",
+    "segment": "ETC",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  },
+  {
+    "customer": "TOTAL",
+    "segment": "",
+    "dsr": "",
+    "city": "",
+    "region": ""
+  }
+]
