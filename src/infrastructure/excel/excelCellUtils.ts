@@ -63,11 +63,12 @@ export function cellDate(cell: ExcelJS.Cell): Date | null {
 
 export function normalizeHeader(value: string): string {
   return value
+    .toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d")
     .replace(/\s+/g, " ")
-    .trim()
-    .toLowerCase();
+    .trim();
 }
 
 export function parseMonthFromCell(cell: ExcelJS.Cell): MonthKey | null {

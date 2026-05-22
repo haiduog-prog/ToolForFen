@@ -9,7 +9,7 @@ import type { MonthKey } from "./month";
 describe("End-to-End Excel Generation and Comparison", () => {
   it("should parse datamau, build report, write excel and match chuan.xlsx", async () => {
     // 1. Read datamau.xlsx
-    const buffer = fs.readFileSync("d:\\Work\\ToolsForFen\\datamau.xlsx");
+    const buffer = fs.readFileSync("datamau.xlsx");
     const mockFile = {
       name: "datamau.xlsx",
       arrayBuffer: async () => {
@@ -35,7 +35,14 @@ describe("End-to-End Excel Generation and Comparison", () => {
     // Save Blob to file
     const arrayBuffer = await blob.arrayBuffer();
     const outputBuffer = Buffer.from(arrayBuffer);
-    const outputPath = "d:\\Work\\ToolsForFen\\test_output.xlsx";
+    let outputPath = "test_output.xlsx";
+    try {
+      if (fs.existsSync(outputPath)) {
+        fs.unlinkSync(outputPath);
+      }
+    } catch (e) {
+      outputPath = `test_output_${Date.now()}.xlsx`;
+    }
     fs.writeFileSync(outputPath, outputBuffer);
     console.log(`Saved output excel to ${outputPath}`);
 
@@ -44,7 +51,7 @@ describe("End-to-End Excel Generation and Comparison", () => {
     await wbGen.xlsx.readFile(outputPath);
 
     const wbChuan = new ExcelJS.Workbook();
-    await wbChuan.xlsx.readFile("d:\\Work\\ToolsForFen\\chuan.xlsx");
+    await wbChuan.xlsx.readFile("chuan.xlsx");
 
     // We compare worksheets: 'QEC review', 'SKU review', 'SKU - Customer review'
     const sheetsToCompare = ["QEC review", "SKU review", "SKU - Customer review"];

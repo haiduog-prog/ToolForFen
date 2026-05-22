@@ -1,13 +1,13 @@
-import { AlertTriangle, CheckCircle2, Download, FileSpreadsheet, Loader2, Upload } from "lucide-react";
+import { AlertTriangle, CheckCircle2, ChevronLeft, ChevronRight, Download, FileSpreadsheet, Loader2, Upload } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 import { buildQecReport } from "../application/buildQecReport";
-import { type MetricRow, type QecReport, type SourceParseResult } from "../domain/entities";
+import { type MetricRow, type QecReport, type SourceParseResult, type SourceTransaction } from "../domain/entities";
 import { displayMonth, type MonthKey } from "../domain/month";
 import { readSourceWorkbook } from "../infrastructure/excel/readSourceWorkbook";
 import { writeReportWorkbook } from "../infrastructure/excel/writeReportWorkbook";
-import { downloadBlob, formatNumber, formatRatio } from "../shared/formatters";
+import { downloadBlob, formatDate, formatNumber, formatRatio } from "../shared/formatters";
 
-type PreviewTab = "qec" | "sku" | "customerRevenue" | "customerQuantity";
+type PreviewTab = "qec" | "sku" | "customerRevenue" | "customerQuantity" | "dataSource";
 
 export function App() {
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -23,7 +23,12 @@ export function App() {
       return null;
     }
 
-    return buildQecReport(source, reportMonth);
+    try {
+      return buildQecReport(source, reportMonth);
+    } catch (caught) {
+      console.error("QEC Calculation Error:", caught);
+      return caught instanceof Error ? caught : new Error("Lỗi khi tính toán báo cáo QEC.");
+    }
   }, [source, reportMonth]);
 
   async function handleFile(file: File | null) {
@@ -52,7 +57,7 @@ export function App() {
   }
 
   async function handleExport() {
-    if (!report || !source) {
+    if (!report || report instanceof Error || !source) {
       return;
     }
 
@@ -92,17 +97,17 @@ export function App() {
             {isReading ? <Loader2 className="spin" aria-hidden="true" /> : <Upload aria-hidden="true" />}
             {isReading ? "Đang đọc" : "Upload Excel"}
           </button>
-          <button className="primary-button" type="button" onClick={() => void handleExport()} disabled={!report || isExporting}>
+          <button className="primary-button" type="button" onClick={() => void handleExport()} disabled={!report || report instanceof Error || isExporting}>
             {isExporting ? <Loader2 className="spin" aria-hidden="true" /> : <Download aria-hidden="true" />}
             Export
           </button>
         </div>
       </section>
 
-      {error ? (
+      {error || report instanceof Error ? (
         <section className="notice error-notice">
           <AlertTriangle aria-hidden="true" />
-          <span>{error}</span>
+          <span>{error || (report as Error).message}</span>
         </section>
       ) : null}
 
@@ -145,7 +150,7 @@ export function App() {
             </select>
           </div>
 
-          {report ? <Summary report={report} /> : null}
+          {report && !(report instanceof Error) ? <Summary report={report} /> : null}
 
           {source?.warnings.length ? (
             <div className="panel-section">
@@ -163,7 +168,7 @@ export function App() {
         </aside>
 
         <section className="preview-panel">
-          {report ? (
+          {report && !(report instanceof Error) ? (
             <>
               <div className="preview-head">
                 <div>
@@ -174,18 +179,41 @@ export function App() {
               </div>
 
               {activeTab === "qec" ? (
-                <MetricTable
-                  rows={report.qecRows}
-                  report={report}
-                  labelHeader="Segment"
-                  showShares
-                  valuePrecision={0}
-                />
+                <div className="qec-preview-container">
+                  <div className="preview-section">
+                    <h3 className="preview-section-title">Segment Review</h3>
+                    <MetricTable
+                      rows={report.qecRows}
+                      report={report}
+                      labelHeader="Segment"
+                      showShares
+                      valuePrecision={0}
+                    />
+                  </div>
+                  <div className="preview-section">
+                    <h3 className="preview-section-title">DSR Review</h3>
+                    <MetricTable
+                      rows={report.dsrRows}
+                      report={report}
+                      labelHeader="DSR Staff"
+                      valuePrecision={0}
+                    />
+                  </div>
+                  <div className="preview-section">
+                    <h3 className="preview-section-title">Customer Detail Review</h3>
+                    <MetricTable
+                      rows={report.customerBaseRows}
+                      report={report}
+                      labelHeader="Customer Name"
+                      valuePrecision={0}
+                    />
+                  </div>
+                </div>
               ) : null}
 
               {activeTab === "sku" ? (
                 <MetricTable
-                  rows={report.skuRevenueRows.slice(0, 50)}
+                  rows={report.skuRevenueRows}
                   report={report}
                   labelHeader="BRAND_OF_PRODUCT (PCS)"
                   valuePrecision={0}
@@ -198,6 +226,10 @@ export function App() {
 
               {activeTab === "customerQuantity" ? (
                 <CustomerPreview report={report} kind="quantity" />
+              ) : null}
+
+              {activeTab === "dataSource" && source ? (
+                <DataSourcePreview transactions={source.transactions} />
               ) : null}
             </>
           ) : (
@@ -247,7 +279,8 @@ function TabBar({ activeTab, onChange }: { activeTab: PreviewTab; onChange: (tab
     ["qec", "QEC"],
     ["sku", "SKU"],
     ["customerRevenue", "Customer revenue"],
-    ["customerQuantity", "Customer quantity"]
+    ["customerQuantity", "Customer quantity"],
+    ["dataSource", "Data nguồn"]
   ];
 
   return (
@@ -308,8 +341,8 @@ function MetricTable({
           </tr>
         </thead>
         <tbody>
-          {rows.map((row) => (
-            <tr key={row.label} className={row.label === "Total" ? "total-row" : undefined}>
+          {rows.map((row, rowIdx) => (
+            <tr key={`${row.label}-${rowIdx}`} className={row.label === "Total" ? "total-row" : undefined}>
               <th>{row.label}</th>
               {report.periodMonths.map((month) => (
                 <td key={month}>{formatNumber(row.monthValues[month] ?? 0, valuePrecision)}</td>
@@ -383,5 +416,114 @@ function CustomerPreview({ report, kind }: { report: QecReport; kind: "revenue" 
         </tbody>
       </table>
     </div>
+  );
+}
+
+function DataSourcePreview({ transactions }: { transactions: SourceTransaction[] }) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 50;
+
+  const totalPages = useMemo(() => {
+    return Math.max(1, Math.ceil(transactions.length / pageSize));
+  }, [transactions.length]);
+
+  const paginatedTransactions = useMemo(() => {
+    const startIndex = (currentPage - 1) * pageSize;
+    return transactions.slice(startIndex, startIndex + pageSize);
+  }, [transactions, currentPage]);
+
+  // Reset page when transaction list changes
+  useMemo(() => {
+    setCurrentPage(1);
+  }, [transactions]);
+
+  const pageOptions = useMemo(() => {
+    return Array.from({ length: totalPages }, (_, i) => i + 1);
+  }, [totalPages]);
+
+  return (
+    <>
+      <div className="table-wrap">
+        <table className="data-table">
+          <thead>
+            <tr>
+              <th className="sticky-col">Dòng</th>
+              <th>Thời gian</th>
+              <th>Tháng</th>
+              <th className="text-left">Khách hàng</th>
+              <th className="text-left">Sản phẩm</th>
+              <th className="text-left">Segment</th>
+              <th className="text-left">DSR</th>
+              <th>Đơn giá</th>
+              <th>Số lượng</th>
+              <th>Thành tiền</th>
+              <th>Doanh thu</th>
+            </tr>
+          </thead>
+          <tbody>
+            {paginatedTransactions.map((t, idx) => (
+              <tr key={`${t.rowNumber}-${idx}`}>
+                <th className="sticky-col">{t.rowNumber}</th>
+                <td>{formatDate(t.date)}</td>
+                <td>{displayMonth(t.month)}</td>
+                <td className="text-left">{t.customer}</td>
+                <td className="text-left">{t.product}</td>
+                <td className="text-left">{t.segment}</td>
+                <td className="text-left">{t.dsr}</td>
+                <td>{formatNumber(t.unitPrice)}</td>
+                <td>{formatNumber(t.quantity, 2)}</td>
+                <td>{formatNumber(t.amount)}</td>
+                <td>{formatNumber(t.revenue)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="pagination-container">
+        <div className="pagination-info">
+          Hiển thị dòng {Math.min(transactions.length, (currentPage - 1) * pageSize + 1)}-
+          {Math.min(transactions.length, currentPage * pageSize)} trong tổng số {formatNumber(transactions.length)} dòng
+        </div>
+
+        <div className="pagination-controls">
+          <button
+            className="pagination-btn"
+            type="button"
+            onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+            disabled={currentPage === 1}
+          >
+            <ChevronLeft aria-hidden="true" />
+            Trước
+          </button>
+
+          <div className="pagination-selector">
+            <span>Trang</span>
+            <select
+              className="pagination-select"
+              value={currentPage}
+              onChange={(e) => setCurrentPage(Number(e.target.value))}
+            >
+              {pageOptions.map((p) => (
+                <option key={p} value={p}>
+                  {p}
+                </option>
+              ))}
+            </select>
+            <span>/ {totalPages}</span>
+          </div>
+
+          <button
+            className="pagination-btn"
+            type="button"
+            onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+            disabled={currentPage === totalPages}
+          >
+            Sau
+            <ChevronRight aria-hidden="true" />
+          </button>
+        </div>
+      </div>
+    </>
   );
 }

@@ -470,3 +470,123 @@ select {
     grid-template-columns: 1fr;
   }
 }
+
+/* Styling cho phân trang (Client-side Pagination) của Data nguồn */
+.pagination-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 20px;
+  background: #ffffff;
+  border-top: 1px solid #e6ebef;
+  flex-wrap: wrap;
+}
+
+.pagination-info {
+  font-size: 13px;
+  color: #4f5f6e;
+  font-weight: 600;
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pagination-btn {
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 6px;
+  background: #edf6f6;
+  color: #0d5c63;
+  border: 1px solid #c6dfdf;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              background-color 0.2s;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background: #0e7c7b;
+  color: #ffffff;
+  border-color: #0e7c7b;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(14, 124, 123, 0.2);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.pagination-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #17202a;
+}
+
+.pagination-select {
+  height: 36px;
+  width: 90px;
+  padding: 0 8px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+/* Helper align text */
+.text-left {
+  text-align: left !important;
+}
+
+/* Hỗ trợ sticky cột Dòng của bảng */
+.data-table tbody th.sticky-col {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: #ffffff;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+}
+
+.data-table thead th.sticky-col {
+  position: sticky;
+  left: 0;
+  z-index: 3;
+  background: #183b56;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+}
+
+/* Styling cho cụm preview tab QEC review chứa nhiều bảng */
+.qec-preview-container {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding: 16px 0;
+}
+
+.preview-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #ffffff;
+  border-radius: 8px;
+}
+
+.preview-section-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+  padding-left: 4px;
+  border-left: 4px solid #0e7c7b;
+  line-height: 1.2;
+}

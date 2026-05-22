@@ -1,12 +1,7 @@
 import type ExcelJS from "exceljs";
 import { type MetricRow, type QecReport, type SourceTransaction, type ValueKind } from "../../domain/entities";
 import { displayMonth, type MonthKey } from "../../domain/month";
-import {
-  STATIC_CUSTOMERS,
-  STATIC_PCS_PRODUCTS,
-  STATIC_VND_PRODUCTS,
-  lookupSegment
-} from "../../domain/customerMapping";
+import { lookupSegment } from "../../domain/customerMapping";
 import { totalMetricRow } from "../../domain/reportCalculations";
 
 const HEADER_FILL = { type: "pattern", pattern: "solid", fgColor: { argb: "FF183B56" } } as const;
@@ -16,7 +11,7 @@ const QUANTITY_FORMAT = '#,##0.00;[Red]-#,##0.00;"-"';
 const RATIO_FORMAT = '0.00%;[Red]-0.00%;"-"';
 
 export async function writeReportWorkbook(report: QecReport, sourceRows: SourceTransaction[]): Promise<Blob> {
-  const ExcelJSModule = await import("exceljs");
+  const ExcelJSModule = await import("exceljs/dist/exceljs.min.js");
   const workbook = new ExcelJSModule.default.Workbook();
   workbook.creator = "QEC Export Builder";
   workbook.created = new Date();
@@ -50,8 +45,10 @@ function addQecWorksheet(workbook: ExcelJS.Workbook, report: QecReport): void {
     sheet.getColumn(i + 1).width = w;
   });
 
-  // --- BẢNG SEGMENT (Dòng 1-11) ---
-  const segHeaderRow = sheet.getRow(1);
+  let currentRowNum = 1;
+
+  // --- BẢNG SEGMENT (Bắt đầu từ dòng 1) ---
+  const segHeaderRow = sheet.getRow(currentRowNum);
   segHeaderRow.getCell(6).value = "Segment";
   report.periodMonths.forEach((month, idx) => {
     segHeaderRow.getCell(7 + idx).value = displayMonth(month);
@@ -68,10 +65,11 @@ function addQecWorksheet(workbook: ExcelJS.Workbook, report: QecReport): void {
   segHeaderRow.getCell(32).value = "ICYTD";
   segHeaderRow.getCell(33).value = "IYA";
   styleHeaderCells(segHeaderRow, 6, 33);
+  currentRowNum++;
 
   for (let i = 0; i < report.qecRows.length; i++) {
-    const rowData = report.qecRows[i];
-    const excelRow = sheet.getRow(2 + i);
+    const rowData = report.qecRows[i]!;
+    const excelRow = sheet.getRow(currentRowNum);
     excelRow.getCell(6).value = rowData.label;
     report.periodMonths.forEach((month, idx) => {
       excelRow.getCell(7 + idx).value = rowData.monthValues[month] ?? 0;
@@ -94,10 +92,11 @@ function addQecWorksheet(workbook: ExcelJS.Workbook, report: QecReport): void {
     if (rowData.label === "Total") {
       styleTotalCells(excelRow, 6, 33);
     }
+    currentRowNum++;
   }
 
-  // --- DÒNG 12 (Index Tĩnh) ---
-  const r12 = sheet.getRow(12);
+  // --- DÒNG INDEX TĨNH (Phía dưới bảng Segment) ---
+  const r12 = sheet.getRow(currentRowNum);
   r12.getCell(6).value = 1;
   r12.getCell(7).value = 56;
   r12.getCell(8).value = 56;
@@ -107,9 +106,10 @@ function addQecWorksheet(workbook: ExcelJS.Workbook, report: QecReport): void {
   r12.getCell(28).value = 55.25;
   r12.getCell(29).value = 53.857142857142854;
   r12.height = 14.25;
+  currentRowNum++;
 
-  // --- BẢNG REGION (Dòng 13-20) ---
-  const regHeaderRow = sheet.getRow(13);
+  // --- BẢNG REGION ---
+  const regHeaderRow = sheet.getRow(currentRowNum);
   regHeaderRow.getCell(6).value = "REGION";
   report.periodMonths.forEach((month, idx) => {
     regHeaderRow.getCell(7 + idx).value = displayMonth(month);
@@ -124,6 +124,7 @@ function addQecWorksheet(workbook: ExcelJS.Workbook, report: QecReport): void {
   regHeaderRow.getCell(32).value = "ICYTD";
   regHeaderRow.getCell(33).value = "IYA";
   styleHeaderCells(regHeaderRow, 6, 33);
+  currentRowNum++;
 
   const regionNames = [
     "1. HA NOI",
@@ -134,7 +135,7 @@ function addQecWorksheet(workbook: ExcelJS.Workbook, report: QecReport): void {
     "6. MKD"
   ];
   for (let i = 0; i < regionNames.length; i++) {
-    const excelRow = sheet.getRow(14 + i);
+    const excelRow = sheet.getRow(currentRowNum);
     excelRow.getCell(6).value = regionNames[i];
     for (let c = 7; c <= 33; c++) {
       if (c === 23 || c === 24) continue;
@@ -142,10 +143,11 @@ function addQecWorksheet(workbook: ExcelJS.Workbook, report: QecReport): void {
     }
     styleDataCells(excelRow, 6, 33);
     formatQecRow(excelRow);
+    currentRowNum++;
   }
 
-  // Dòng Total Region (dòng 20)
-  const regTotalRow = sheet.getRow(20);
+  // Dòng Total Region
+  const regTotalRow = sheet.getRow(currentRowNum);
   regTotalRow.getCell(6).value = "Total";
   for (let c = 7; c <= 33; c++) {
     if (c === 23 || c === 24) continue;
@@ -153,9 +155,10 @@ function addQecWorksheet(workbook: ExcelJS.Workbook, report: QecReport): void {
   }
   styleTotalCells(regTotalRow, 6, 33);
   formatQecRow(regTotalRow);
+  currentRowNum++;
 
-  // --- DÒNG 21 (Ẩn) ---
-  const r21 = sheet.getRow(21);
+  // --- DÒNG ẨN ---
+  const r21 = sheet.getRow(currentRowNum);
   r21.getCell(7).value = 34;
   r21.getCell(8).value = 38;
   r21.getCell(25).value = 194;
@@ -164,9 +167,10 @@ function addQecWorksheet(workbook: ExcelJS.Workbook, report: QecReport): void {
   r21.getCell(29).value = 26.285714285714285;
   r21.height = 14.25;
   r21.hidden = true;
+  currentRowNum++;
 
-  // --- BẢNG DSR (Dòng 22-26) ---
-  const dsrHeaderRow = sheet.getRow(22);
+  // --- BẢNG DSR ---
+  const dsrHeaderRow = sheet.getRow(currentRowNum);
   dsrHeaderRow.getCell(4).value = "Mã DSR";
   dsrHeaderRow.getCell(5).value = "TOTAL STAFF";
   dsrHeaderRow.getCell(6).value = "DSR";
@@ -183,6 +187,7 @@ function addQecWorksheet(workbook: ExcelJS.Workbook, report: QecReport): void {
   dsrHeaderRow.getCell(32).value = "ICYTD";
   dsrHeaderRow.getCell(33).value = "IYA";
   styleHeaderCells(dsrHeaderRow, 4, 33);
+  currentRowNum++;
 
   const dsrMeta = [
     { code: "NV1", staff: "SM" },
@@ -191,8 +196,8 @@ function addQecWorksheet(workbook: ExcelJS.Workbook, report: QecReport): void {
   ];
 
   for (let i = 0; i < report.dsrRows.length - 1; i++) {
-    const rowData = report.dsrRows[i];
-    const excelRow = sheet.getRow(23 + i);
+    const rowData = report.dsrRows[i]!;
+    const excelRow = sheet.getRow(currentRowNum);
     excelRow.getCell(4).value = dsrMeta[i]?.code ?? "";
     excelRow.getCell(5).value = dsrMeta[i]?.staff ?? "";
     excelRow.getCell(6).value = rowData.label;
@@ -212,38 +217,43 @@ function addQecWorksheet(workbook: ExcelJS.Workbook, report: QecReport): void {
 
     styleDataCells(excelRow, 4, 33);
     formatQecRow(excelRow);
+    currentRowNum++;
   }
 
-  // Dòng Total DSR (dòng 26)
-  const dsrTotalRow = sheet.getRow(26);
-  const totalDsrData = report.dsrRows[report.dsrRows.length - 1]!;
+  // Dòng Total DSR
+  const dsrTotalRow = sheet.getRow(currentRowNum);
+  const totalDsrData = report.dsrRows && report.dsrRows.length > 0
+    ? report.dsrRows[report.dsrRows.length - 1]!
+    : null;
   dsrTotalRow.getCell(6).value = "Total";
   report.periodMonths.forEach((month, idx) => {
-    dsrTotalRow.getCell(7 + idx).value = totalDsrData.monthValues[month] ?? 0;
+    dsrTotalRow.getCell(7 + idx).value = totalDsrData ? (totalDsrData.monthValues[month] ?? 0) : 0;
   });
-  dsrTotalRow.getCell(25).value = totalDsrData.previousYearTotal;
-  dsrTotalRow.getCell(26).value = totalDsrData.currentYearTotal;
-  dsrTotalRow.getCell(27).value = totalDsrData.p3m;
-  dsrTotalRow.getCell(28).value = totalDsrData.p6m;
-  dsrTotalRow.getCell(29).value = totalDsrData.p9m;
-  dsrTotalRow.getCell(30).value = totalDsrData.trend;
-  dsrTotalRow.getCell(31).value = totalDsrData.ifytd;
-  dsrTotalRow.getCell(32).value = totalDsrData.icytd;
-  dsrTotalRow.getCell(33).value = totalDsrData.iya;
+  dsrTotalRow.getCell(25).value = totalDsrData ? totalDsrData.previousYearTotal : 0;
+  dsrTotalRow.getCell(26).value = totalDsrData ? totalDsrData.currentYearTotal : 0;
+  dsrTotalRow.getCell(27).value = totalDsrData ? totalDsrData.p3m : 0;
+  dsrTotalRow.getCell(28).value = totalDsrData ? totalDsrData.p6m : 0;
+  dsrTotalRow.getCell(29).value = totalDsrData ? totalDsrData.p9m : 0;
+  dsrTotalRow.getCell(30).value = totalDsrData ? totalDsrData.trend : 0;
+  dsrTotalRow.getCell(31).value = totalDsrData ? totalDsrData.ifytd : 0;
+  dsrTotalRow.getCell(32).value = totalDsrData ? totalDsrData.icytd : 0;
+  dsrTotalRow.getCell(33).value = totalDsrData ? totalDsrData.iya : 0;
   styleTotalCells(dsrTotalRow, 4, 33);
   formatQecRow(dsrTotalRow);
+  currentRowNum++;
 
-  // --- DÒNG 27 (Tĩnh) ---
-  const r27 = sheet.getRow(27);
+  // --- DÒNG TĨNH ---
+  const r27 = sheet.getRow(currentRowNum);
   r27.getCell(7).value = 39;
   r27.getCell(8).value = 43;
   r27.getCell(26).value = 0;
   r27.getCell(32).value = 0.6267029972752044;
   r27.getCell(33).value = 0;
   r27.height = 14.25;
+  currentRowNum++;
 
-  // --- BẢNG CUSTOMER DETAIL (Dòng 28-324) ---
-  const custHeaderRow = sheet.getRow(28);
+  // --- BẢNG CUSTOMER DETAIL ---
+  const custHeaderRow = sheet.getRow(currentRowNum);
   custHeaderRow.getCell(1).value = "Customer code";
   custHeaderRow.getCell(2).value = "CUSTOMER_CHANGE";
   custHeaderRow.getCell(3).value = "Segment";
@@ -263,10 +273,11 @@ function addQecWorksheet(workbook: ExcelJS.Workbook, report: QecReport): void {
   custHeaderRow.getCell(32).value = "ICYTD";
   custHeaderRow.getCell(33).value = "IYA";
   styleHeaderCells(custHeaderRow, 1, 33);
+  currentRowNum++;
 
   for (let i = 0; i < report.customerBaseRows.length; i++) {
     const rowData = report.customerBaseRows[i]!;
-    const excelRow = sheet.getRow(29 + i);
+    const excelRow = sheet.getRow(currentRowNum);
     excelRow.getCell(2).value = rowData.label;
     excelRow.getCell(3).value = lookupSegment(rowData.label);
 
@@ -285,10 +296,11 @@ function addQecWorksheet(workbook: ExcelJS.Workbook, report: QecReport): void {
 
     styleDataCells(excelRow, 1, 33);
     formatQecRow(excelRow);
+    currentRowNum++;
   }
 
-  // Dòng TOTAL Customer Detail (dòng 324)
-  const custTotalRow = sheet.getRow(324);
+  // Dòng TOTAL Customer Detail
+  const custTotalRow = sheet.getRow(currentRowNum);
   const totalCustData = totalMetricRow("TOTAL", report.customerBaseRows, report.periodMonths, report.reportMonth);
   custTotalRow.getCell(2).value = "TOTAL";
   report.periodMonths.forEach((month, idx) => {
@@ -323,11 +335,14 @@ function addSkuWorksheet(workbook: ExcelJS.Workbook, report: QecReport): void {
   sheet.getColumn(22).width = 16;
   for (let c = 23; c <= 30; c++) sheet.getColumn(c).width = 12;
 
+  let currentRowNum = 1;
+
   // --- DÒNG 1 (Index Tĩnh cho PCS) ---
-  writeSkuIndexRow(sheet, 1, true);
+  writeSkuIndexRow(sheet, currentRowNum, true);
+  currentRowNum++;
 
   // --- HEADER BẢNG PCS (Dòng 2) ---
-  const headerPcs = sheet.getRow(2);
+  const headerPcs = sheet.getRow(currentRowNum);
   headerPcs.getCell(1).value = "Code";
   headerPcs.getCell(2).value = "BRAND_OF_PRODUCT (PCS)";
   report.periodMonths.forEach((month, idx) => {
@@ -343,10 +358,11 @@ function addSkuWorksheet(workbook: ExcelJS.Workbook, report: QecReport): void {
   headerPcs.getCell(28).value = "ICYTD";
   headerPcs.getCell(29).value = "IYA";
   styleHeaderCells(headerPcs, 1, 29);
+  currentRowNum++;
 
-  // --- DỮ LIỆU BẢNG PCS (Dòng 3-34) ---
+  // --- DỮ LIỆU BẢNG PCS ---
   report.skuQuantityRows.forEach((row, idx) => {
-    const excelRow = sheet.getRow(3 + idx);
+    const excelRow = sheet.getRow(currentRowNum);
     excelRow.getCell(1).value = idx;
     excelRow.getCell(2).value = row.label;
     report.periodMonths.forEach((month, mIdx) => {
@@ -364,10 +380,11 @@ function addSkuWorksheet(workbook: ExcelJS.Workbook, report: QecReport): void {
 
     styleDataCells(excelRow, 1, 29);
     formatSkuRow(excelRow, QUANTITY_FORMAT);
+    currentRowNum++;
   });
 
-  // --- GRAND TOTAL BẢNG PCS (Dòng 35) ---
-  const pcsTotalExcelRow = sheet.getRow(35);
+  // --- GRAND TOTAL BẢNG PCS ---
+  const pcsTotalExcelRow = sheet.getRow(currentRowNum);
   const pcsTotalData = totalMetricRow("Grand Total", report.skuQuantityRows, report.periodMonths, report.reportMonth);
   pcsTotalExcelRow.getCell(2).value = "Grand Total";
   report.periodMonths.forEach((month, idx) => {
@@ -385,12 +402,14 @@ function addSkuWorksheet(workbook: ExcelJS.Workbook, report: QecReport): void {
 
   styleTotalCells(pcsTotalExcelRow, 1, 29);
   formatSkuRow(pcsTotalExcelRow, QUANTITY_FORMAT);
+  currentRowNum++;
 
-  // --- DÒNG 36 (Index Tĩnh cho VND) ---
-  writeSkuIndexRow(sheet, 36, false);
+  // --- Index Tĩnh cho VND ---
+  writeSkuIndexRow(sheet, currentRowNum, false);
+  currentRowNum++;
 
-  // --- HEADER BẢNG VND (Dòng 37) ---
-  const headerVnd = sheet.getRow(37);
+  // --- HEADER BẢNG VND ---
+  const headerVnd = sheet.getRow(currentRowNum);
   headerVnd.getCell(1).value = "Code";
   headerVnd.getCell(2).value = "BRAND_OF_PRODUCT (VND)";
   report.periodMonths.forEach((month, idx) => {
@@ -407,10 +426,11 @@ function addSkuWorksheet(workbook: ExcelJS.Workbook, report: QecReport): void {
   headerVnd.getCell(28).value = "ICYTD";
   headerVnd.getCell(29).value = "IYA";
   styleHeaderCells(headerVnd, 1, 29);
+  currentRowNum++;
 
-  // --- DỮ LIỆU BẢNG VND (Dòng 38-89) ---
+  // --- DỮ LIỆU BẢNG VND ---
   report.skuRevenueRows.forEach((row, idx) => {
-    const excelRow = sheet.getRow(38 + idx);
+    const excelRow = sheet.getRow(currentRowNum);
     excelRow.getCell(1).value = idx;
     excelRow.getCell(2).value = row.label;
     report.periodMonths.forEach((month, mIdx) => {
@@ -428,10 +448,11 @@ function addSkuWorksheet(workbook: ExcelJS.Workbook, report: QecReport): void {
 
     styleDataCells(excelRow, 1, 29);
     formatSkuRow(excelRow, MONEY_FORMAT);
+    currentRowNum++;
   });
 
-  // --- TOTAL BẢNG VND (Dòng 90) ---
-  const vndTotalExcelRow = sheet.getRow(90);
+  // --- TOTAL BẢNG VND ---
+  const vndTotalExcelRow = sheet.getRow(currentRowNum);
   const vndTotalData = totalMetricRow("TOTAL", report.skuRevenueRows, report.periodMonths, report.reportMonth);
   vndTotalExcelRow.getCell(2).value = "TOTAL";
   report.periodMonths.forEach((month, idx) => {
@@ -458,19 +479,10 @@ function addCustomerWorksheet(
   valueKind: ValueKind
 ): void {
   const rawSections = valueKind === "money" ? report.customerRevenueSections : report.customerQuantitySections;
-  const staticProducts = valueKind === "money" ? STATIC_VND_PRODUCTS : STATIC_PCS_PRODUCTS;
   const valueFormat = valueKind === "money" ? MONEY_FORMAT : QUANTITY_FORMAT;
 
-  // Sync customer blocks order with STATIC_CUSTOMERS static order
-  const customerOrderMap = new Map<string, number>();
-  STATIC_CUSTOMERS.forEach((name, index) => {
-    customerOrderMap.set(name, index);
-  });
-
   const sections = [...rawSections].sort((a, b) => {
-    const idxA = customerOrderMap.get(a.customer);
-    const idxB = customerOrderMap.get(b.customer);
-    return (idxA ?? 999) - (idxB ?? 999);
+    return a.customer.localeCompare(b.customer, "vi");
   });
 
   const sheet = workbook.addWorksheet(sheetName, {
@@ -514,46 +526,23 @@ function addCustomerWorksheet(
     styleCustomerHeader(headerRow);
     currentRowNum++;
 
-    // Create a quick lookup map of actual rows for speed
-    const prodMap = new Map<string, MetricRow>();
-    section.rows.forEach(r => {
-      prodMap.set(r.label, r);
-    });
-
-    // --- 2. 52 DÒNG SKU TĨNH ---
-    staticProducts.forEach((prodName) => {
+    // --- 2. GHI TOÀN BỘ CÁC DÒNG SKU CÓ GIAO DỊCH THỰC TẾ CỦA KHÁCH HÀNG ---
+    section.rows.forEach((rowData) => {
       const excelRow = sheet.getRow(currentRowNum);
-      excelRow.getCell(4).value = prodName;
+      excelRow.getCell(4).value = rowData.label;
 
-      const rowData = prodName ? prodMap.get(prodName) : null;
-      if (rowData) {
-        report.periodMonths.forEach((month, mIdx) => {
-          excelRow.getCell(5 + mIdx).value = rowData.monthValues[month] ?? 0;
-        });
-        excelRow.getCell(22).value = rowData.previousYearTotal;
-        excelRow.getCell(23).value = rowData.currentYearTotal;
-        excelRow.getCell(24).value = rowData.p3m;
-        excelRow.getCell(25).value = rowData.p6m;
-        excelRow.getCell(26).value = rowData.p9m;
-        excelRow.getCell(27).value = rowData.trend;
-        excelRow.getCell(28).value = rowData.ifytd;
-        excelRow.getCell(29).value = rowData.icytd;
-        excelRow.getCell(30).value = rowData.iya;
-      } else {
-        // Fallback to zeros
-        report.periodMonths.forEach((month, mIdx) => {
-          excelRow.getCell(5 + mIdx).value = 0;
-        });
-        excelRow.getCell(22).value = 0;
-        excelRow.getCell(23).value = 0;
-        excelRow.getCell(24).value = 0;
-        excelRow.getCell(25).value = 0;
-        excelRow.getCell(26).value = 0;
-        excelRow.getCell(27).value = 0;
-        excelRow.getCell(28).value = 0;
-        excelRow.getCell(29).value = 0;
-        excelRow.getCell(30).value = 0;
-      }
+      report.periodMonths.forEach((month, mIdx) => {
+        excelRow.getCell(5 + mIdx).value = rowData.monthValues[month] ?? 0;
+      });
+      excelRow.getCell(22).value = rowData.previousYearTotal;
+      excelRow.getCell(23).value = rowData.currentYearTotal;
+      excelRow.getCell(24).value = rowData.p3m;
+      excelRow.getCell(25).value = rowData.p6m;
+      excelRow.getCell(26).value = rowData.p9m;
+      excelRow.getCell(27).value = rowData.trend;
+      excelRow.getCell(28).value = rowData.ifytd;
+      excelRow.getCell(29).value = rowData.icytd;
+      excelRow.getCell(30).value = rowData.iya;
 
       styleCustomerDataCells(excelRow);
       formatCustomerProductRow(excelRow, valueFormat);

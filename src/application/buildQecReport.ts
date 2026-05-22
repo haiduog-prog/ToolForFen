@@ -7,8 +7,8 @@ import {
   buildMetricRow
 } from "../domain/reportCalculations";
 import { compareMonths, reportPeriodMonths, type MonthKey } from "../domain/month";
-import { UNMAPPED_SEGMENT, type QecReport, type SourceParseResult, type SourceTransaction } from "../domain/entities";
-import { DSR_ORDER, STATIC_CUSTOMERS, STATIC_PCS_PRODUCTS, STATIC_VND_PRODUCTS, lookupSegment } from "../domain/customerMapping";
+import { UNMAPPED_SEGMENT, type QecReport, type SourceParseResult, type SourceTransaction, type MetricRow } from "../domain/entities";
+import { DSR_ORDER, lookupSegment } from "../domain/customerMapping";
 
 export function buildQecReport(source: SourceParseResult, reportMonth: MonthKey): QecReport {
   if (!source.availableMonths.includes(reportMonth)) {
@@ -64,6 +64,12 @@ export function buildQecReport(source: SourceParseResult, reportMonth: MonthKey)
     return qecMap.get(seg) ?? buildMetricRow(seg, {}, periodMonths, reportMonth);
   });
 
+  // Bổ sung dòng Unmapped vào cuối bảng QEC review nếu phân khúc này có doanh số phát sinh
+  const unmappedRow = qecMap.get(UNMAPPED_SEGMENT);
+  if (unmappedRow && (unmappedRow.previousYearTotal > 0 || unmappedRow.currentYearTotal > 0)) {
+    orderedQecRows.push(unmappedRow);
+  }
+
   const qecRowsWithTotal = [...addShareColumns(orderedQecRows), totalMetricRow("Total", orderedQecRows, periodMonths, reportMonth)];
 
   // Group quantity from actual transactions
@@ -73,10 +79,16 @@ export function buildQecReport(source: SourceParseResult, reportMonth: MonthKey)
     values[transaction.month] = (values[transaction.month] ?? 0) + transaction.quantity;
     qtyMap.set(transaction.product, values);
   }
-  const skuQuantityRows = STATIC_PCS_PRODUCTS.map((prodName, index) => {
-    const values = prodName ? (qtyMap.get(prodName) ?? {}) : {};
-    return buildMetricRow(prodName || `Empty SKU ${index}`, values, periodMonths, reportMonth);
-  });
+
+  // SKU Quantity Rows: Chỉ lấy sản phẩm thực tế phát sinh giao dịch trong file input
+  const skuQuantityRows: MetricRow[] = [];
+  for (const [prodName, values] of qtyMap.entries()) {
+    const row = buildMetricRow(prodName, values, periodMonths, reportMonth);
+    if (row.previousYearTotal > 0 || row.currentYearTotal > 0) {
+      skuQuantityRows.push(row);
+    }
+  }
+  skuQuantityRows.sort((a, b) => b.currentYearTotal - a.currentYearTotal);
 
   // Group revenue from actual transactions
   const revMap = new Map<string, Record<MonthKey, number>>();
@@ -85,10 +97,16 @@ export function buildQecReport(source: SourceParseResult, reportMonth: MonthKey)
     values[transaction.month] = (values[transaction.month] ?? 0) + transaction.revenue;
     revMap.set(transaction.product, values);
   }
-  const skuRevenueRows = STATIC_VND_PRODUCTS.map((prodName, index) => {
-    const values = prodName ? (revMap.get(prodName) ?? {}) : {};
-    return buildMetricRow(prodName || `Empty SKU ${index}`, values, periodMonths, reportMonth);
-  });
+
+  // SKU Revenue Rows: Chỉ lấy sản phẩm thực tế phát sinh giao dịch trong file input
+  const skuRevenueRows: MetricRow[] = [];
+  for (const [prodName, values] of revMap.entries()) {
+    const row = buildMetricRow(prodName, values, periodMonths, reportMonth);
+    if (row.previousYearTotal > 0 || row.currentYearTotal > 0) {
+      skuRevenueRows.push(row);
+    }
+  }
+  skuRevenueRows.sort((a, b) => b.currentYearTotal - a.currentYearTotal);
 
 
   const nonExcludedTransactions = transactions.filter(
@@ -141,11 +159,15 @@ export function buildQecReport(source: SourceParseResult, reportMonth: MonthKey)
     customerValuesMap.set(customer, values);
   }
 
-  // Construct MetricRow for all 295 static customers in order
-  const customerBaseRows = STATIC_CUSTOMERS.map((customerName) => {
-    const values = customerValuesMap.get(customerName) ?? {};
-    return buildMetricRow(customerName, values, periodMonths, reportMonth);
-  });
+  // Customer Base Rows: Chỉ lấy những khách hàng thực tế phát sinh giao dịch trong file input
+  const customerBaseRows: MetricRow[] = [];
+  for (const [customerName, values] of customerValuesMap.entries()) {
+    const row = buildMetricRow(customerName, values, periodMonths, reportMonth);
+    if (row.previousYearTotal > 0 || row.currentYearTotal > 0) {
+      customerBaseRows.push(row);
+    }
+  }
+  customerBaseRows.sort((a, b) => a.label.localeCompare(b.label, "vi"));
 
 
   const customers = new Set(transactions.map((transaction) => transaction.customer).filter(Boolean));

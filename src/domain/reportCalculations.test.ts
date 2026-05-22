@@ -73,7 +73,7 @@ describe("readSourceWorkbook", () => {
   it("parses datamau.xlsx successfully", async () => {
     const fs = await import("fs");
     const { readSourceWorkbook } = await import("../infrastructure/excel/readSourceWorkbook");
-    const buffer = fs.readFileSync("d:\\Work\\ToolsForFen\\datamau.xlsx");
+    const buffer = fs.readFileSync("datamau.xlsx");
     const mockFile = {
       name: "datamau.xlsx",
       arrayBuffer: async () => {
