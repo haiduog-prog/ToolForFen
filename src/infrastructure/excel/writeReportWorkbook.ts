@@ -446,6 +446,7 @@ function addQecWorksheet(workbook: ExcelJS.Workbook, report: QecReport): void {
   for (let i = 0; i < report.customerBaseRows.length; i++) {
     const rowData = report.customerBaseRows[i]!;
     const excelRow = sheet.getRow(currentRowNum);
+    excelRow.getCell(1).value = i + 1;
     excelRow.getCell(2).value = rowData.label;
     excelRow.getCell(3).value = lookupSegment(rowData.label);
 
