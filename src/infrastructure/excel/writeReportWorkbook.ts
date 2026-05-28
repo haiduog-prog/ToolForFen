@@ -28,10 +28,23 @@ export async function writeReportWorkbook(report: QecReport, sourceRows: SourceT
     configSheet.getRow(2 + idx).getCell(1).value = name;
   });
 
+  // Tạo data source cho dropdown sản phẩm ở cột B
+  configSheet.getRow(1).getCell(2).value = "Product List";
+  const rawProducts = [
+    ...report.skuRevenueRows.map(p => p.label),
+    ...report.skuQuantityRows.map(p => p.label)
+  ];
+  const productNamesUnique = [...new Set(rawProducts)].sort((a, b) => a.localeCompare(b, "vi"));
+  productNamesUnique.forEach((name, idx) => {
+    configSheet.getRow(2 + idx).getCell(2).value = name;
+  });
+
   addQecWorksheet(workbook, report);
   addSkuWorksheet(workbook, report);
   addCustomerWorksheet(workbook, "SKU - Customer review", report, "money");
   addCustomerWorksheet(workbook, "SKU customer review", report, "quantity");
+  addProductWorksheet(workbook, "SKU review - Customer", report, "money");
+  addProductWorksheet(workbook, "SKU review customer", report, "quantity");
   addSourceWorksheet(workbook, sourceRows);
 
   const buffer = await workbook.xlsx.writeBuffer();
@@ -905,6 +918,243 @@ function addCustomerWorksheet(
   // Cột ICYTD
   totalRow.getCell(indexStart + 7).value = {
     formula: `IFERROR(${cyYColTotal}${currentRowNum}/SUM(${getColumnLetter(5)}${currentRowNum}:${getColumnLetter(5 + monthNumber(report.reportMonth) - 1)}${currentRowNum}), 0)`
+  };
+
+  // Cột IYA
+  totalRow.getCell(indexStart + 8).value = {
+    formula: `IFERROR(${getColumnLetter(monthEnd)}${currentRowNum}/${getColumnLetter(5 + monthNumber(report.reportMonth) - 1)}${currentRowNum}, 0)`
+  };
+
+  for (const c of colsToStyle) {
+    const cell = totalRow.getCell(c);
+    cell.font = { bold: true };
+    cell.fill = TOTAL_FILL;
+    cell.border = thinBorder();
+  }
+  formatCustomerProductRow(totalRow, valueFormat, numMonths);
+  totalRow.height = 22;
+}
+
+function addProductWorksheet(
+  workbook: ExcelJS.Workbook,
+  sheetName: string,
+  report: QecReport,
+  valueKind: ValueKind
+): void {
+  const rawProducts = valueKind === "money"
+    ? report.skuRevenueRows.map((p) => p.label)
+    : report.skuQuantityRows.map((p) => p.label);
+  const productNames = [...rawProducts].sort((a, b) => a.localeCompare(b, "vi"));
+  
+  const customerNames = report.customerBaseRows.map((c) => c.label).sort((a, b) => a.localeCompare(b, "vi"));
+  const valueFormat = valueKind === "money" ? MONEY_FORMAT : QUANTITY_FORMAT;
+  const numMonths = report.periodMonths.length;
+
+  const sheet = workbook.addWorksheet(sheetName, {
+    views: [{ state: "frozen", ySplit: 3, xSplit: 4 }]
+  });
+
+  // Set widths dynamically
+  sheet.getColumn(1).width = 15;
+  sheet.getColumn(2).width = 50;
+  sheet.getColumn(3).width = 5;
+  sheet.getColumn(4).width = 50;
+  const monthEnd = 5 + numMonths - 1;
+  for (let c = 5; c <= monthEnd; c++) sheet.getColumn(c).width = 14;
+  
+  const spacerCol = 5 + numMonths;
+  sheet.getColumn(spacerCol).width = 5;
+  
+  const indexStart = 5 + numMonths + 1;
+  sheet.getColumn(indexStart).width = 16;     // Previous Year Total
+  sheet.getColumn(indexStart + 1).width = 16; // Current Year Total
+  for (let c = indexStart + 2; c <= indexStart + 8; c++) {
+    sheet.getColumn(c).width = 12; // P3M..IYA
+  }
+
+  // --- DÒNG 1 (Product Dropdown) ---
+  const r1 = sheet.getRow(1);
+  r1.getCell(1).value = "Product";
+  r1.getCell(2).value = productNames[0] ?? "";
+
+  r1.getCell(1).font = { bold: true, color: { argb: "FFFFFFFF" } };
+  r1.getCell(1).fill = HEADER_FILL;
+  r1.getCell(1).alignment = { vertical: "middle", horizontal: "center" };
+  r1.getCell(1).border = thinBorder();
+
+  r1.getCell(2).font = { bold: true, color: { argb: "FF183B56" } };
+  r1.getCell(2).alignment = { vertical: "middle", horizontal: "left" };
+  r1.getCell(2).border = thinBorder();
+
+  if (productNames.length > 0) {
+    r1.getCell(2).dataValidation = {
+      type: "list",
+      allowBlank: true,
+      formulae: [`Config!$B$2:$B$${productNames.length + 1}`]
+    };
+  }
+  r1.height = 24;
+
+  // --- DÒNG 2 (Dòng trống) ---
+  sheet.getRow(2).height = 15;
+
+  // --- DÒNG 3 (Header Bảng) ---
+  const headerRow = sheet.getRow(3);
+  headerRow.getCell(4).value = "CUSTOMER";
+  report.periodMonths.forEach((month, idx) => {
+    headerRow.getCell(5 + idx).value = displayMonth(month);
+  });
+  
+  headerRow.getCell(indexStart).value = report.previousYear;
+  headerRow.getCell(indexStart + 1).value = report.currentYear;
+  headerRow.getCell(indexStart + 2).value = "P3M";
+  headerRow.getCell(indexStart + 3).value = "P6M";
+  headerRow.getCell(indexStart + 4).value = "P9M";
+  headerRow.getCell(indexStart + 5).value = "TREND";
+  headerRow.getCell(indexStart + 6).value = "IFYTD";
+  headerRow.getCell(indexStart + 7).value = "ICYTD";
+  headerRow.getCell(indexStart + 8).value = "IYA";
+
+  const colsToStyle = [4];
+  for (let c = 5; c <= monthEnd; c++) colsToStyle.push(c);
+  for (let c = indexStart; c <= indexStart + 8; c++) colsToStyle.push(c);
+
+  for (const c of colsToStyle) {
+    const cell = headerRow.getCell(c);
+    cell.font = { bold: true, color: { argb: "FFFFFFFF" } };
+    cell.fill = HEADER_FILL;
+    cell.alignment = { vertical: "middle", horizontal: "center", wrapText: true };
+    cell.border = thinBorder();
+  }
+  headerRow.height = 24;
+
+  let currentRowNum = 4;
+
+  // --- CÁC DÒNG CUSTOMER DÙNG CÔNG THỨC SUMIFS ---
+  customerNames.forEach((custName, idx) => {
+    const excelRow = sheet.getRow(currentRowNum);
+    excelRow.getCell(1).value = idx + 1; // STT
+    excelRow.getCell(2).value = custName;
+    excelRow.getCell(3).value = lookupSegment(custName);
+    excelRow.getCell(4).value = custName; // Hiển thị tên khách hàng ở cột D
+
+    report.periodMonths.forEach((month, mIdx) => {
+      const colLetter = getColumnLetter(5 + mIdx);
+      const dataCol = valueKind === "money" ? "J" : "H";
+      excelRow.getCell(5 + mIdx).value = {
+        formula: `SUMIFS('Data nguồn'!${dataCol}:${dataCol}, 'Data nguồn'!D:D, $D${currentRowNum}, 'Data nguồn'!F:F, $B$1, 'Data nguồn'!C:C, ${colLetter}$3)`
+      };
+    });
+
+    // Cột CY Y-1
+    excelRow.getCell(indexStart).value = {
+      formula: `SUM(${getColumnLetter(5)}${currentRowNum}:${getColumnLetter(5 + 11)}${currentRowNum})`
+    };
+
+    // Cột CY Y
+    excelRow.getCell(indexStart + 1).value = {
+      formula: `SUM(${getColumnLetter(5 + 12)}${currentRowNum}:${getColumnLetter(monthEnd)}${currentRowNum})`
+    };
+
+    // Cột P3M
+    excelRow.getCell(indexStart + 2).value = {
+      formula: `AVERAGE(${getColumnLetter(monthEnd - 2)}${currentRowNum}:${getColumnLetter(monthEnd)}${currentRowNum})`
+    };
+
+    // Cột P6M
+    excelRow.getCell(indexStart + 3).value = {
+      formula: `AVERAGE(${getColumnLetter(monthEnd - 5)}${currentRowNum}:${getColumnLetter(monthEnd)}${currentRowNum})`
+    };
+
+    // Cột P9M
+    excelRow.getCell(indexStart + 4).value = {
+      formula: `AVERAGE(${getColumnLetter(monthEnd - 8)}${currentRowNum}:${getColumnLetter(monthEnd)}${currentRowNum})`
+    };
+
+    // Cột TREND
+    const p3mCol = getColumnLetter(indexStart + 2);
+    const p6mCol = getColumnLetter(indexStart + 3);
+    const p9mCol = getColumnLetter(indexStart + 4);
+    excelRow.getCell(indexStart + 5).value = {
+      formula: `IFERROR((${p3mCol}${currentRowNum}*2)/(${p6mCol}${currentRowNum}+${p9mCol}${currentRowNum}), 0)`
+    };
+
+    // Cột IFYTD
+    const cyYCol = getColumnLetter(indexStart + 1);
+    excelRow.getCell(indexStart + 6).value = {
+      formula: `IFERROR(${cyYCol}${currentRowNum}/SUM(${getColumnLetter(5)}${currentRowNum}:${getColumnLetter(5 + monthNumber(report.reportMonth) - 1)}${currentRowNum}), 0)`
+    };
+
+    // Cột ICYTD
+    excelRow.getCell(indexStart + 7).value = {
+      formula: `IFERROR(${cyYCol}${currentRowNum}/SUM(${getColumnLetter(5)}${currentRowNum}:${getColumnLetter(5 + monthNumber(report.reportMonth) - 1)}${currentRowNum}), 0)`
+    };
+
+    // Cột IYA
+    excelRow.getCell(indexStart + 8).value = {
+      formula: `IFERROR(${getColumnLetter(monthEnd)}${currentRowNum}/${getColumnLetter(5 + monthNumber(report.reportMonth) - 1)}${currentRowNum}, 0)`
+    };
+
+    styleCustomerDataCells(excelRow, numMonths);
+    formatCustomerProductRow(excelRow, valueFormat, numMonths);
+    excelRow.height = 20;
+    currentRowNum++;
+  });
+
+  // --- DÒNG GRAND TOTAL ---
+  const totalRow = sheet.getRow(currentRowNum);
+  totalRow.getCell(4).value = "TOTAL";
+
+  report.periodMonths.forEach((month, mIdx) => {
+    const colLetter = getColumnLetter(5 + mIdx);
+    totalRow.getCell(5 + mIdx).value = {
+      formula: `SUM(${colLetter}4:${colLetter}${currentRowNum - 1})`
+    };
+  });
+
+  // Cột CY Y-1
+  totalRow.getCell(indexStart).value = {
+    formula: `SUM(${getColumnLetter(indexStart)}4:${getColumnLetter(indexStart)}${currentRowNum - 1})`
+  };
+
+  // Cột CY Y
+  totalRow.getCell(indexStart + 1).value = {
+    formula: `SUM(${getColumnLetter(indexStart + 1)}4:${getColumnLetter(indexStart + 1)}${currentRowNum - 1})`
+  };
+
+  // Cột P3M
+  totalRow.getCell(indexStart + 2).value = {
+    formula: `SUM(${getColumnLetter(indexStart + 2)}4:${getColumnLetter(indexStart + 2)}${currentRowNum - 1})`
+  };
+
+  // Cột P6M
+  totalRow.getCell(indexStart + 3).value = {
+    formula: `SUM(${getColumnLetter(indexStart + 3)}4:${getColumnLetter(indexStart + 3)}${currentRowNum - 1})`
+  };
+
+  // Cột P9M
+  totalRow.getCell(indexStart + 4).value = {
+    formula: `SUM(${getColumnLetter(indexStart + 4)}4:${getColumnLetter(indexStart + 4)}${currentRowNum - 1})`
+  };
+
+  // Cột TREND
+  const p3mColTotal = getColumnLetter(indexStart + 2);
+  const p6mColTotal = getColumnLetter(indexStart + 3);
+  const p9mColTotal = getColumnLetter(indexStart + 4);
+  totalRow.getCell(indexStart + 5).value = {
+    formula: `IFERROR((${p3mColTotal}${currentRowNum}*2)/(${p6mColTotal}${currentRowNum}+${p9mColTotal}${currentRowNum}), 0)`
+  };
+
+  // Cột IFYTD
+  const cyYColTotal = getColumnLetter(indexStart + 1);
+  totalRow.getCell(indexStart + 6).value = {
+    formula: `IFERROR(${cyYColTotal}${currentRowNum}/SUM(${getColumnLetter(5)}${currentRowNum}:${getColumnLetter(5 + monthNumber(report.reportMonth) - 1)}${currentRowNum}), 0)`
+  };
+
+  // Cột ICYTD
+  const cyYColTotalIcytd = getColumnLetter(indexStart + 1);
+  totalRow.getCell(indexStart + 7).value = {
+    formula: `IFERROR(${cyYColTotalIcytd}${currentRowNum}/SUM(${getColumnLetter(5)}${currentRowNum}:${getColumnLetter(5 + monthNumber(report.reportMonth) - 1)}${currentRowNum}), 0)`
   };
 
   // Cột IYA

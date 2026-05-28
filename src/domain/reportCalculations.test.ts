@@ -60,7 +60,9 @@ describe("writeReportWorkbook", () => {
       skuRevenueRows: [],
       skuQuantityRows: [],
       customerRevenueSections: [],
-      customerQuantitySections: []
+      customerQuantitySections: [],
+      skuCustomerRevenueSections: [],
+      skuCustomerQuantitySections: []
     };
 
     const blob = await writeReportWorkbook(dummyReport, []);

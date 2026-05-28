@@ -2,6 +2,7 @@ import {
   addShareColumns,
   aggregateMetricRows,
   buildCustomerSections,
+  buildSkuCustomerSections,
   filterTransactionsThroughMonth,
   totalMetricRow,
   buildMetricRow
@@ -127,6 +128,20 @@ export function buildQecReport(source: SourceParseResult, reportMonth: MonthKey)
     (transaction: SourceTransaction) => transaction.quantity
   );
 
+  const skuCustomerRevenueSections = buildSkuCustomerSections(
+    nonExcludedTransactions,
+    periodMonths,
+    reportMonth,
+    (transaction: SourceTransaction) => transaction.revenue
+  );
+
+  const skuCustomerQuantitySections = buildSkuCustomerSections(
+    nonExcludedTransactions,
+    periodMonths,
+    reportMonth,
+    (transaction: SourceTransaction) => transaction.quantity
+  );
+
   const dsrBaseRows = aggregateMetricRows(
     transactions,
     periodMonths,
@@ -200,6 +215,8 @@ export function buildQecReport(source: SourceParseResult, reportMonth: MonthKey)
     skuRevenueRows,
     skuQuantityRows,
     customerRevenueSections,
-    customerQuantitySections
+    customerQuantitySections,
+    skuCustomerRevenueSections,
+    skuCustomerQuantitySections
   };
 }

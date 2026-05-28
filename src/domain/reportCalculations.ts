@@ -7,7 +7,7 @@ import {
   ytdMonths,
   type MonthKey
 } from "./month";
-import { UNMAPPED_SEGMENT, type CustomerSection, type MetricRow, type SourceTransaction } from "./entities";
+import { UNMAPPED_SEGMENT, type CustomerSection, type SkuCustomerSection, type MetricRow, type SourceTransaction } from "./entities";
 
 const SEGMENT_ORDER = ["B&M", "WS", "Ecom", "ETC", "IDP", "KEY", "OTC", "MT", "AK", UNMAPPED_SEGMENT];
 
@@ -177,4 +177,39 @@ export function filterTransactionsThroughMonth(
   return transactions.filter((transaction) => {
     return compareMonths(transaction.month, reportMonth) <= 0 && periodSet.has(transaction.month);
   });
+}
+
+export function buildSkuCustomerSections(
+  transactions: SourceTransaction[],
+  periodMonths: MonthKey[],
+  reportMonth: MonthKey,
+  valueSelector: ValueSelector
+): SkuCustomerSection[] {
+  const transactionsByProduct = new Map<string, SourceTransaction[]>();
+
+  for (const transaction of transactions) {
+    const product = transaction.product.trim() || "Unknown product";
+    const productRows = transactionsByProduct.get(product) ?? [];
+    productRows.push(transaction);
+    transactionsByProduct.set(product, productRows);
+  }
+
+  return Array.from(transactionsByProduct.entries())
+    .sort(([a], [b]) => a.localeCompare(b, "vi"))
+    .map(([product, productTransactions]) => {
+      const rows = aggregateMetricRows(
+        productTransactions,
+        periodMonths,
+        reportMonth,
+        (transaction) => transaction.customer,
+        valueSelector,
+        "total"
+      );
+
+      return {
+        product,
+        rows,
+        total: totalMetricRow("Total", rows, periodMonths, reportMonth)
+      };
+    });
 }

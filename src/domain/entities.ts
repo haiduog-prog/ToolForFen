@@ -49,6 +49,12 @@ export interface CustomerSection {
   total: MetricRow;
 }
 
+export interface SkuCustomerSection {
+  product: string;
+  rows: MetricRow[];
+  total: MetricRow;
+}
+
 export interface QecReport {
   reportMonth: MonthKey;
   periodMonths: MonthKey[];
@@ -62,6 +68,8 @@ export interface QecReport {
   skuQuantityRows: MetricRow[];
   customerRevenueSections: CustomerSection[];
   customerQuantitySections: CustomerSection[];
+  skuCustomerRevenueSections: SkuCustomerSection[];
+  skuCustomerQuantitySections: SkuCustomerSection[];
 }
 
 export interface ReportSummary {

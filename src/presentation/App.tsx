@@ -7,7 +7,7 @@ import { readSourceWorkbook } from "../infrastructure/excel/readSourceWorkbook";
 import { writeReportWorkbook } from "../infrastructure/excel/writeReportWorkbook";
 import { downloadBlob, formatDate, formatNumber, formatRatio } from "../shared/formatters";
 
-type PreviewTab = "qec" | "sku" | "customerRevenue" | "customerQuantity" | "dataSource";
+type PreviewTab = "qec" | "sku" | "customerRevenue" | "customerQuantity" | "skuCustomerRevenue" | "skuCustomerQuantity" | "dataSource";
 
 export function App() {
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -228,6 +228,14 @@ export function App() {
                 <CustomerPreview report={report} kind="quantity" />
               ) : null}
 
+              {activeTab === "skuCustomerRevenue" ? (
+                <SkuCustomerPreview report={report} kind="revenue" />
+              ) : null}
+
+              {activeTab === "skuCustomerQuantity" ? (
+                <SkuCustomerPreview report={report} kind="quantity" />
+              ) : null}
+
               {activeTab === "dataSource" && source ? (
                 <DataSourcePreview transactions={source.transactions} />
               ) : null}
@@ -280,6 +288,8 @@ function TabBar({ activeTab, onChange }: { activeTab: PreviewTab; onChange: (tab
     ["sku", "SKU"],
     ["customerRevenue", "Customer revenue"],
     ["customerQuantity", "Customer quantity"],
+    ["skuCustomerRevenue", "SKU review - Customer"],
+    ["skuCustomerQuantity", "SKU review customer"],
     ["dataSource", "Data nguồn"]
   ];
 
@@ -482,6 +492,141 @@ function CustomerPreview({ report, kind }: { report: QecReport; kind: "revenue" 
             ))}
             
             {/* Dòng Total của riêng khách hàng này */}
+            {currentSection.total ? (
+              <tr className="total-row">
+                <th className="sticky-col text-left">TOTAL</th>
+                {report.periodMonths.map((month) => (
+                  <td key={month}>
+                    {formatNumber(currentSection.total.monthValues[month] ?? 0, kind === "quantity" ? 2 : 0)}
+                  </td>
+                ))}
+                <td>{formatNumber(currentSection.total.previousYearTotal, kind === "quantity" ? 2 : 0)}</td>
+                <td>{formatNumber(currentSection.total.currentYearTotal, kind === "quantity" ? 2 : 0)}</td>
+                <td>{formatNumber(currentSection.total.p3m, kind === "quantity" ? 2 : 0)}</td>
+                <td>{formatNumber(currentSection.total.p6m, kind === "quantity" ? 2 : 0)}</td>
+                <td>{formatNumber(currentSection.total.p9m, kind === "quantity" ? 2 : 0)}</td>
+                <td>{formatRatio(currentSection.total.trend)}</td>
+              </tr>
+            ) : null}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+function SkuCustomerPreview({ report, kind }: { report: QecReport; kind: "revenue" | "quantity" }) {
+  const sections = kind === "revenue" ? report.skuCustomerRevenueSections : report.skuCustomerQuantitySections;
+  
+  // State quản lý sản phẩm được chọn
+  const [selectedProduct, setSelectedProduct] = useState<string>(() => {
+    return sections[0]?.product ?? "";
+  });
+
+  // Nếu danh sách rỗng
+  if (sections.length === 0) {
+    return (
+      <div className="empty-state">
+        <span>Không có dữ liệu sản phẩm</span>
+      </div>
+    );
+  }
+
+  // Tìm section tương ứng với sản phẩm được chọn
+  const currentSection = sections.find(s => s.product === selectedProduct) ?? sections[0]!;
+
+  // Tìm index hiện tại để làm nút Prev/Next
+  const currentIndex = sections.findIndex(s => s.product === selectedProduct);
+
+  function handlePrev() {
+    if (currentIndex > 0) {
+      setSelectedProduct(sections[currentIndex - 1]!.product);
+    }
+  }
+
+  function handleNext() {
+    if (currentIndex < sections.length - 1) {
+      setSelectedProduct(sections[currentIndex + 1]!.product);
+    }
+  }
+
+  return (
+    <div className="customer-preview-container">
+      <div className="customer-selector-bar">
+        <div className="selector-left">
+          <span className="field-label">Chọn Sản phẩm (Name SKU)</span>
+          <div className="selector-controls">
+            <button 
+              className="nav-btn" 
+              type="button" 
+              onClick={handlePrev} 
+              disabled={currentIndex <= 0}
+              title="Sản phẩm trước"
+            >
+              <ChevronLeft aria-hidden="true" />
+            </button>
+            <select
+              value={selectedProduct}
+              onChange={(e) => setSelectedProduct(e.target.value)}
+              className="customer-select"
+            >
+              {sections.map((sec) => (
+                <option key={sec.product} value={sec.product}>
+                  {sec.product}
+                </option>
+              ))}
+            </select>
+            <button 
+              className="nav-btn" 
+              type="button" 
+              onClick={handleNext} 
+              disabled={currentIndex >= sections.length - 1}
+              title="Sản phẩm tiếp theo"
+            >
+              <ChevronRight aria-hidden="true" />
+            </button>
+          </div>
+        </div>
+        <div className="selector-right">
+          <div className="customer-info-badge">
+            Tổng cộng: <strong>{sections.length}</strong> sản phẩm
+          </div>
+        </div>
+      </div>
+
+      <div className="table-wrap">
+        <table className="data-table">
+          <thead>
+            <tr>
+              <th className="sticky-col">Name Customer</th>
+              {report.periodMonths.map((month) => (
+                <th key={month}>{displayMonth(month)}</th>
+              ))}
+              <th>{report.previousYear}</th>
+              <th>{report.currentYear}</th>
+              <th>P3M</th>
+              <th>P6M</th>
+              <th>P9M</th>
+              <th>TREND</th>
+            </tr>
+          </thead>
+          <tbody>
+            {currentSection.rows.map((row) => (
+              <tr key={row.label}>
+                <th className="sticky-col text-left">{row.label}</th>
+                {report.periodMonths.map((month) => (
+                  <td key={month}>{formatNumber(row.monthValues[month] ?? 0, kind === "quantity" ? 2 : 0)}</td>
+                ))}
+                <td>{formatNumber(row.previousYearTotal, kind === "quantity" ? 2 : 0)}</td>
+                <td>{formatNumber(row.currentYearTotal, kind === "quantity" ? 2 : 0)}</td>
+                <td>{formatNumber(row.p3m, kind === "quantity" ? 2 : 0)}</td>
+                <td>{formatNumber(row.p6m, kind === "quantity" ? 2 : 0)}</td>
+                <td>{formatNumber(row.p9m, kind === "quantity" ? 2 : 0)}</td>
+                <td>{formatRatio(row.trend)}</td>
+              </tr>
+            ))}
+            
+            {/* Dòng Total của riêng sản phẩm này */}
             {currentSection.total ? (
               <tr className="total-row">
                 <th className="sticky-col text-left">TOTAL</th>
