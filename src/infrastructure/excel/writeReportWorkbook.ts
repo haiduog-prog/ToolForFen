@@ -91,25 +91,74 @@ function addQecWorksheet(workbook: ExcelJS.Workbook, report: QecReport): void {
     const rowData = report.qecRows[i]!;
     const excelRow = sheet.getRow(currentRowNum);
     excelRow.getCell(6).value = rowData.label;
+    
+    const isTotalRow = rowData.label === "Total";
+
     report.periodMonths.forEach((month, idx) => {
-      excelRow.getCell(7 + idx).value = rowData.monthValues[month] ?? 0;
+      if (isTotalRow) {
+        const colLetter = getColumnLetter(7 + idx);
+        excelRow.getCell(7 + idx).value = {
+          formula: `SUM(${colLetter}2:${colLetter}${currentRowNum - 1})`
+        };
+      } else {
+        excelRow.getCell(7 + idx).value = rowData.monthValues[month] ?? 0;
+      }
     });
+
     excelRow.getCell(7 + numMonths).value = rowData.previousYearShare ?? 0;
     excelRow.getCell(7 + numMonths + 1).value = rowData.currentYearShare ?? 0;
-    excelRow.getCell(7 + numMonths + 2).value = rowData.previousYearTotal;
-    excelRow.getCell(7 + numMonths + 3).value = rowData.currentYearTotal;
-    excelRow.getCell(7 + numMonths + 4).value = rowData.p3m;
-    excelRow.getCell(7 + numMonths + 5).value = rowData.p6m;
-    excelRow.getCell(7 + numMonths + 6).value = rowData.p9m;
-    excelRow.getCell(7 + numMonths + 7).value = rowData.trend;
-    excelRow.getCell(7 + numMonths + 8).value = rowData.ifytd;
-    excelRow.getCell(7 + numMonths + 9).value = rowData.icytd;
-    excelRow.getCell(7 + numMonths + 10).value = rowData.iya;
+
+    if (isTotalRow) {
+      excelRow.getCell(7 + numMonths + 2).value = {
+        formula: `SUM(${getColumnLetter(7 + numMonths + 2)}2:${getColumnLetter(7 + numMonths + 2)}${currentRowNum - 1})`
+      };
+      excelRow.getCell(7 + numMonths + 3).value = {
+        formula: `SUM(${getColumnLetter(7 + numMonths + 3)}2:${getColumnLetter(7 + numMonths + 3)}${currentRowNum - 1})`
+      };
+      excelRow.getCell(7 + numMonths + 4).value = {
+        formula: `SUM(${getColumnLetter(7 + numMonths + 4)}2:${getColumnLetter(7 + numMonths + 4)}${currentRowNum - 1})`
+      };
+      excelRow.getCell(7 + numMonths + 5).value = {
+        formula: `SUM(${getColumnLetter(7 + numMonths + 5)}2:${getColumnLetter(7 + numMonths + 5)}${currentRowNum - 1})`
+      };
+      excelRow.getCell(7 + numMonths + 6).value = {
+        formula: `SUM(${getColumnLetter(7 + numMonths + 6)}2:${getColumnLetter(7 + numMonths + 6)}${currentRowNum - 1})`
+      };
+    } else {
+      excelRow.getCell(7 + numMonths + 2).value = {
+        formula: `SUM(${getColumnLetter(7)}${currentRowNum}:${getColumnLetter(7 + 11)}${currentRowNum})`
+      };
+      excelRow.getCell(7 + numMonths + 3).value = {
+        formula: `SUM(${getColumnLetter(7 + 12)}${currentRowNum}:${getColumnLetter(7 + numMonths - 1)}${currentRowNum})`
+      };
+      excelRow.getCell(7 + numMonths + 4).value = {
+        formula: `AVERAGE(${getColumnLetter(7 + numMonths - 3)}${currentRowNum}:${getColumnLetter(7 + numMonths - 1)}${currentRowNum})`
+      };
+      excelRow.getCell(7 + numMonths + 5).value = {
+        formula: `AVERAGE(${getColumnLetter(7 + numMonths - 6)}${currentRowNum}:${getColumnLetter(7 + numMonths - 1)}${currentRowNum})`
+      };
+      excelRow.getCell(7 + numMonths + 6).value = {
+        formula: `AVERAGE(${getColumnLetter(7 + numMonths - 9)}${currentRowNum}:${getColumnLetter(7 + numMonths - 1)}${currentRowNum})`
+      };
+    }
+
+    excelRow.getCell(7 + numMonths + 7).value = {
+      formula: `IFERROR((${getColumnLetter(7 + numMonths + 4)}${currentRowNum}*2)/(${getColumnLetter(7 + numMonths + 5)}${currentRowNum}+${getColumnLetter(7 + numMonths + 6)}${currentRowNum}), 0)`
+    };
+    excelRow.getCell(7 + numMonths + 8).value = {
+      formula: `IFERROR(${getColumnLetter(7 + numMonths + 3)}${currentRowNum}/SUM(${getColumnLetter(7)}${currentRowNum}:${getColumnLetter(7 + monthNumber(report.reportMonth) - 1)}${currentRowNum}), 0)`
+    };
+    excelRow.getCell(7 + numMonths + 9).value = {
+      formula: `IFERROR(${getColumnLetter(7 + numMonths + 3)}${currentRowNum}/SUM(${getColumnLetter(7)}${currentRowNum}:${getColumnLetter(7 + monthNumber(report.reportMonth) - 1)}${currentRowNum}), 0)`
+    };
+    excelRow.getCell(7 + numMonths + 10).value = {
+      formula: `IFERROR(${getColumnLetter(7 + numMonths - 1)}${currentRowNum}/${getColumnLetter(7 + monthNumber(report.reportMonth) - 1)}${currentRowNum}, 0)`
+    };
 
     styleDataCells(excelRow, 6, endCol);
     formatQecRow(excelRow, numMonths);
 
-    if (rowData.label === "Total") {
+    if (isTotalRow) {
       styleTotalCells(excelRow, 6, endCol);
     }
     currentRowNum++;
@@ -154,13 +203,42 @@ function addQecWorksheet(workbook: ExcelJS.Workbook, report: QecReport): void {
     "5. HCM",
     "6. MKD"
   ];
+  const regionStartRow = currentRowNum;
   for (let i = 0; i < regionNames.length; i++) {
     const excelRow = sheet.getRow(currentRowNum);
     excelRow.getCell(6).value = regionNames[i];
-    for (let c = 7; c <= endCol; c++) {
-      if (c === 7 + numMonths || c === 7 + numMonths + 1) continue;
-      excelRow.getCell(c).value = 0;
-    }
+    report.periodMonths.forEach((month, idx) => {
+      excelRow.getCell(7 + idx).value = 0;
+    });
+
+    excelRow.getCell(7 + numMonths + 2).value = {
+      formula: `SUM(${getColumnLetter(7)}${currentRowNum}:${getColumnLetter(7 + 11)}${currentRowNum})`
+    };
+    excelRow.getCell(7 + numMonths + 3).value = {
+      formula: `SUM(${getColumnLetter(7 + 12)}${currentRowNum}:${getColumnLetter(7 + numMonths - 1)}${currentRowNum})`
+    };
+    excelRow.getCell(7 + numMonths + 4).value = {
+      formula: `AVERAGE(${getColumnLetter(7 + numMonths - 3)}${currentRowNum}:${getColumnLetter(7 + numMonths - 1)}${currentRowNum})`
+    };
+    excelRow.getCell(7 + numMonths + 5).value = {
+      formula: `AVERAGE(${getColumnLetter(7 + numMonths - 6)}${currentRowNum}:${getColumnLetter(7 + numMonths - 1)}${currentRowNum})`
+    };
+    excelRow.getCell(7 + numMonths + 6).value = {
+      formula: `AVERAGE(${getColumnLetter(7 + numMonths - 9)}${currentRowNum}:${getColumnLetter(7 + numMonths - 1)}${currentRowNum})`
+    };
+    excelRow.getCell(7 + numMonths + 7).value = {
+      formula: `IFERROR((${getColumnLetter(7 + numMonths + 4)}${currentRowNum}*2)/(${getColumnLetter(7 + numMonths + 5)}${currentRowNum}+${getColumnLetter(7 + numMonths + 6)}${currentRowNum}), 0)`
+    };
+    excelRow.getCell(7 + numMonths + 8).value = {
+      formula: `IFERROR(${getColumnLetter(7 + numMonths + 3)}${currentRowNum}/SUM(${getColumnLetter(7)}${currentRowNum}:${getColumnLetter(7 + monthNumber(report.reportMonth) - 1)}${currentRowNum}), 0)`
+    };
+    excelRow.getCell(7 + numMonths + 9).value = {
+      formula: `IFERROR(${getColumnLetter(7 + numMonths + 3)}${currentRowNum}/SUM(${getColumnLetter(7)}${currentRowNum}:${getColumnLetter(7 + monthNumber(report.reportMonth) - 1)}${currentRowNum}), 0)`
+    };
+    excelRow.getCell(7 + numMonths + 10).value = {
+      formula: `IFERROR(${getColumnLetter(7 + numMonths - 1)}${currentRowNum}/${getColumnLetter(7 + monthNumber(report.reportMonth) - 1)}${currentRowNum}, 0)`
+    };
+
     styleDataCells(excelRow, 6, endCol);
     formatQecRow(excelRow, numMonths);
     currentRowNum++;
@@ -169,10 +247,40 @@ function addQecWorksheet(workbook: ExcelJS.Workbook, report: QecReport): void {
   // Dòng Total Region
   const regTotalRow = sheet.getRow(currentRowNum);
   regTotalRow.getCell(6).value = "Total";
-  for (let c = 7; c <= endCol; c++) {
-    if (c === 7 + numMonths || c === 7 + numMonths + 1) continue;
-    regTotalRow.getCell(c).value = 0;
-  }
+  report.periodMonths.forEach((month, idx) => {
+    regTotalRow.getCell(7 + idx).value = {
+      formula: `SUM(${getColumnLetter(7 + idx)}${regionStartRow}:${getColumnLetter(7 + idx)}${currentRowNum - 1})`
+    };
+  });
+  regTotalRow.getCell(7 + numMonths + 2).value = {
+    formula: `SUM(${getColumnLetter(7 + numMonths + 2)}${regionStartRow}:${getColumnLetter(7 + numMonths + 2)}${currentRowNum - 1})`
+  };
+  regTotalRow.getCell(7 + numMonths + 3).value = {
+    formula: `SUM(${getColumnLetter(7 + numMonths + 3)}${regionStartRow}:${getColumnLetter(7 + numMonths + 3)}${currentRowNum - 1})`
+  };
+  regTotalRow.getCell(7 + numMonths + 4).value = {
+    formula: `SUM(${getColumnLetter(7 + numMonths + 4)}${regionStartRow}:${getColumnLetter(7 + numMonths + 4)}${currentRowNum - 1})`
+  };
+  regTotalRow.getCell(7 + numMonths + 5).value = {
+    formula: `SUM(${getColumnLetter(7 + numMonths + 5)}${regionStartRow}:${getColumnLetter(7 + numMonths + 5)}${currentRowNum - 1})`
+  };
+  regTotalRow.getCell(7 + numMonths + 6).value = {
+    formula: `SUM(${getColumnLetter(7 + numMonths + 6)}${regionStartRow}:${getColumnLetter(7 + numMonths + 6)}${currentRowNum - 1})`
+  };
+
+  regTotalRow.getCell(7 + numMonths + 7).value = {
+    formula: `IFERROR((${getColumnLetter(7 + numMonths + 4)}${currentRowNum}*2)/(${getColumnLetter(7 + numMonths + 5)}${currentRowNum}+${getColumnLetter(7 + numMonths + 6)}${currentRowNum}), 0)`
+  };
+  regTotalRow.getCell(7 + numMonths + 8).value = {
+    formula: `IFERROR(${getColumnLetter(7 + numMonths + 3)}${currentRowNum}/SUM(${getColumnLetter(7)}${currentRowNum}:${getColumnLetter(7 + monthNumber(report.reportMonth) - 1)}${currentRowNum}), 0)`
+  };
+  regTotalRow.getCell(7 + numMonths + 9).value = {
+    formula: `IFERROR(${getColumnLetter(7 + numMonths + 3)}${currentRowNum}/SUM(${getColumnLetter(7)}${currentRowNum}:${getColumnLetter(7 + monthNumber(report.reportMonth) - 1)}${currentRowNum}), 0)`
+  };
+  regTotalRow.getCell(7 + numMonths + 10).value = {
+    formula: `IFERROR(${getColumnLetter(7 + numMonths - 1)}${currentRowNum}/${getColumnLetter(7 + monthNumber(report.reportMonth) - 1)}${currentRowNum}, 0)`
+  };
+
   styleTotalCells(regTotalRow, 6, endCol);
   formatQecRow(regTotalRow, numMonths);
   currentRowNum++;
@@ -215,6 +323,7 @@ function addQecWorksheet(workbook: ExcelJS.Workbook, report: QecReport): void {
     { code: "NV3", staff: "MT-HCM" }
   ];
 
+  const dsrStartRow = currentRowNum;
   for (let i = 0; i < report.dsrRows.length - 1; i++) {
     const rowData = report.dsrRows[i]!;
     const excelRow = sheet.getRow(currentRowNum);
@@ -225,15 +334,34 @@ function addQecWorksheet(workbook: ExcelJS.Workbook, report: QecReport): void {
     report.periodMonths.forEach((month, idx) => {
       excelRow.getCell(7 + idx).value = rowData.monthValues[month] ?? 0;
     });
-    excelRow.getCell(7 + numMonths + 2).value = rowData.previousYearTotal;
-    excelRow.getCell(7 + numMonths + 3).value = rowData.currentYearTotal;
-    excelRow.getCell(7 + numMonths + 4).value = rowData.p3m;
-    excelRow.getCell(7 + numMonths + 5).value = rowData.p6m;
-    excelRow.getCell(7 + numMonths + 6).value = rowData.p9m;
-    excelRow.getCell(7 + numMonths + 7).value = rowData.trend;
-    excelRow.getCell(7 + numMonths + 8).value = rowData.ifytd;
-    excelRow.getCell(7 + numMonths + 9).value = rowData.icytd;
-    excelRow.getCell(7 + numMonths + 10).value = rowData.iya;
+    
+    excelRow.getCell(7 + numMonths + 2).value = {
+      formula: `SUM(${getColumnLetter(7)}${currentRowNum}:${getColumnLetter(7 + 11)}${currentRowNum})`
+    };
+    excelRow.getCell(7 + numMonths + 3).value = {
+      formula: `SUM(${getColumnLetter(7 + 12)}${currentRowNum}:${getColumnLetter(7 + numMonths - 1)}${currentRowNum})`
+    };
+    excelRow.getCell(7 + numMonths + 4).value = {
+      formula: `AVERAGE(${getColumnLetter(7 + numMonths - 3)}${currentRowNum}:${getColumnLetter(7 + numMonths - 1)}${currentRowNum})`
+    };
+    excelRow.getCell(7 + numMonths + 5).value = {
+      formula: `AVERAGE(${getColumnLetter(7 + numMonths - 6)}${currentRowNum}:${getColumnLetter(7 + numMonths - 1)}${currentRowNum})`
+    };
+    excelRow.getCell(7 + numMonths + 6).value = {
+      formula: `AVERAGE(${getColumnLetter(7 + numMonths - 9)}${currentRowNum}:${getColumnLetter(7 + numMonths - 1)}${currentRowNum})`
+    };
+    excelRow.getCell(7 + numMonths + 7).value = {
+      formula: `IFERROR((${getColumnLetter(7 + numMonths + 4)}${currentRowNum}*2)/(${getColumnLetter(7 + numMonths + 5)}${currentRowNum}+${getColumnLetter(7 + numMonths + 6)}${currentRowNum}), 0)`
+    };
+    excelRow.getCell(7 + numMonths + 8).value = {
+      formula: `IFERROR(${getColumnLetter(7 + numMonths + 3)}${currentRowNum}/SUM(${getColumnLetter(7)}${currentRowNum}:${getColumnLetter(7 + monthNumber(report.reportMonth) - 1)}${currentRowNum}), 0)`
+    };
+    excelRow.getCell(7 + numMonths + 9).value = {
+      formula: `IFERROR(${getColumnLetter(7 + numMonths + 3)}${currentRowNum}/SUM(${getColumnLetter(7)}${currentRowNum}:${getColumnLetter(7 + monthNumber(report.reportMonth) - 1)}${currentRowNum}), 0)`
+    };
+    excelRow.getCell(7 + numMonths + 10).value = {
+      formula: `IFERROR(${getColumnLetter(7 + numMonths - 1)}${currentRowNum}/${getColumnLetter(7 + monthNumber(report.reportMonth) - 1)}${currentRowNum}, 0)`
+    };
 
     styleDataCells(excelRow, 4, endCol);
     formatQecRow(excelRow, numMonths);
@@ -242,22 +370,41 @@ function addQecWorksheet(workbook: ExcelJS.Workbook, report: QecReport): void {
 
   // Dòng Total DSR
   const dsrTotalRow = sheet.getRow(currentRowNum);
-  const totalDsrData = report.dsrRows && report.dsrRows.length > 0
-    ? report.dsrRows[report.dsrRows.length - 1]!
-    : null;
   dsrTotalRow.getCell(6).value = "Total";
   report.periodMonths.forEach((month, idx) => {
-    dsrTotalRow.getCell(7 + idx).value = totalDsrData ? (totalDsrData.monthValues[month] ?? 0) : 0;
+    dsrTotalRow.getCell(7 + idx).value = {
+      formula: `SUM(${getColumnLetter(7 + idx)}${dsrStartRow}:${getColumnLetter(7 + idx)}${currentRowNum - 1})`
+    };
   });
-  dsrTotalRow.getCell(7 + numMonths + 2).value = totalDsrData ? totalDsrData.previousYearTotal : 0;
-  dsrTotalRow.getCell(7 + numMonths + 3).value = totalDsrData ? totalDsrData.currentYearTotal : 0;
-  dsrTotalRow.getCell(7 + numMonths + 4).value = totalDsrData ? totalDsrData.p3m : 0;
-  dsrTotalRow.getCell(7 + numMonths + 5).value = totalDsrData ? totalDsrData.p6m : 0;
-  dsrTotalRow.getCell(7 + numMonths + 6).value = totalDsrData ? totalDsrData.p9m : 0;
-  dsrTotalRow.getCell(7 + numMonths + 7).value = totalDsrData ? totalDsrData.trend : 0;
-  dsrTotalRow.getCell(7 + numMonths + 8).value = totalDsrData ? totalDsrData.ifytd : 0;
-  dsrTotalRow.getCell(7 + numMonths + 9).value = totalDsrData ? totalDsrData.icytd : 0;
-  dsrTotalRow.getCell(7 + numMonths + 10).value = totalDsrData ? totalDsrData.iya : 0;
+  dsrTotalRow.getCell(7 + numMonths + 2).value = {
+    formula: `SUM(${getColumnLetter(7 + numMonths + 2)}${dsrStartRow}:${getColumnLetter(7 + numMonths + 2)}${currentRowNum - 1})`
+  };
+  dsrTotalRow.getCell(7 + numMonths + 3).value = {
+    formula: `SUM(${getColumnLetter(7 + numMonths + 3)}${dsrStartRow}:${getColumnLetter(7 + numMonths + 3)}${currentRowNum - 1})`
+  };
+  dsrTotalRow.getCell(7 + numMonths + 4).value = {
+    formula: `SUM(${getColumnLetter(7 + numMonths + 4)}${dsrStartRow}:${getColumnLetter(7 + numMonths + 4)}${currentRowNum - 1})`
+  };
+  dsrTotalRow.getCell(7 + numMonths + 5).value = {
+    formula: `SUM(${getColumnLetter(7 + numMonths + 5)}${dsrStartRow}:${getColumnLetter(7 + numMonths + 5)}${currentRowNum - 1})`
+  };
+  dsrTotalRow.getCell(7 + numMonths + 6).value = {
+    formula: `SUM(${getColumnLetter(7 + numMonths + 6)}${dsrStartRow}:${getColumnLetter(7 + numMonths + 6)}${currentRowNum - 1})`
+  };
+
+  dsrTotalRow.getCell(7 + numMonths + 7).value = {
+    formula: `IFERROR((${getColumnLetter(7 + numMonths + 4)}${currentRowNum}*2)/(${getColumnLetter(7 + numMonths + 5)}${currentRowNum}+${getColumnLetter(7 + numMonths + 6)}${currentRowNum}), 0)`
+  };
+  dsrTotalRow.getCell(7 + numMonths + 8).value = {
+    formula: `IFERROR(${getColumnLetter(7 + numMonths + 3)}${currentRowNum}/SUM(${getColumnLetter(7)}${currentRowNum}:${getColumnLetter(7 + monthNumber(report.reportMonth) - 1)}${currentRowNum}), 0)`
+  };
+  dsrTotalRow.getCell(7 + numMonths + 9).value = {
+    formula: `IFERROR(${getColumnLetter(7 + numMonths + 3)}${currentRowNum}/SUM(${getColumnLetter(7)}${currentRowNum}:${getColumnLetter(7 + monthNumber(report.reportMonth) - 1)}${currentRowNum}), 0)`
+  };
+  dsrTotalRow.getCell(7 + numMonths + 10).value = {
+    formula: `IFERROR(${getColumnLetter(7 + numMonths - 1)}${currentRowNum}/${getColumnLetter(7 + monthNumber(report.reportMonth) - 1)}${currentRowNum}, 0)`
+  };
+
   styleTotalCells(dsrTotalRow, 4, endCol);
   formatQecRow(dsrTotalRow, numMonths);
   currentRowNum++;
@@ -295,6 +442,7 @@ function addQecWorksheet(workbook: ExcelJS.Workbook, report: QecReport): void {
   styleHeaderCells(custHeaderRow, 1, endCol);
   currentRowNum++;
 
+  const custStartRow = currentRowNum;
   for (let i = 0; i < report.customerBaseRows.length; i++) {
     const rowData = report.customerBaseRows[i]!;
     const excelRow = sheet.getRow(currentRowNum);
@@ -304,15 +452,34 @@ function addQecWorksheet(workbook: ExcelJS.Workbook, report: QecReport): void {
     report.periodMonths.forEach((month, idx) => {
       excelRow.getCell(7 + idx).value = rowData.monthValues[month] ?? 0;
     });
-    excelRow.getCell(7 + numMonths + 2).value = rowData.previousYearTotal;
-    excelRow.getCell(7 + numMonths + 3).value = rowData.currentYearTotal;
-    excelRow.getCell(7 + numMonths + 4).value = rowData.p3m;
-    excelRow.getCell(7 + numMonths + 5).value = rowData.p6m;
-    excelRow.getCell(7 + numMonths + 6).value = rowData.p9m;
-    excelRow.getCell(7 + numMonths + 7).value = rowData.trend;
-    excelRow.getCell(7 + numMonths + 8).value = rowData.ifytd;
-    excelRow.getCell(7 + numMonths + 9).value = rowData.icytd;
-    excelRow.getCell(7 + numMonths + 10).value = rowData.iya;
+    
+    excelRow.getCell(7 + numMonths + 2).value = {
+      formula: `SUM(${getColumnLetter(7)}${currentRowNum}:${getColumnLetter(7 + 11)}${currentRowNum})`
+    };
+    excelRow.getCell(7 + numMonths + 3).value = {
+      formula: `SUM(${getColumnLetter(7 + 12)}${currentRowNum}:${getColumnLetter(7 + numMonths - 1)}${currentRowNum})`
+    };
+    excelRow.getCell(7 + numMonths + 4).value = {
+      formula: `AVERAGE(${getColumnLetter(7 + numMonths - 3)}${currentRowNum}:${getColumnLetter(7 + numMonths - 1)}${currentRowNum})`
+    };
+    excelRow.getCell(7 + numMonths + 5).value = {
+      formula: `AVERAGE(${getColumnLetter(7 + numMonths - 6)}${currentRowNum}:${getColumnLetter(7 + numMonths - 1)}${currentRowNum})`
+    };
+    excelRow.getCell(7 + numMonths + 6).value = {
+      formula: `AVERAGE(${getColumnLetter(7 + numMonths - 9)}${currentRowNum}:${getColumnLetter(7 + numMonths - 1)}${currentRowNum})`
+    };
+    excelRow.getCell(7 + numMonths + 7).value = {
+      formula: `IFERROR((${getColumnLetter(7 + numMonths + 4)}${currentRowNum}*2)/(${getColumnLetter(7 + numMonths + 5)}${currentRowNum}+${getColumnLetter(7 + numMonths + 6)}${currentRowNum}), 0)`
+    };
+    excelRow.getCell(7 + numMonths + 8).value = {
+      formula: `IFERROR(${getColumnLetter(7 + numMonths + 3)}${currentRowNum}/SUM(${getColumnLetter(7)}${currentRowNum}:${getColumnLetter(7 + monthNumber(report.reportMonth) - 1)}${currentRowNum}), 0)`
+    };
+    excelRow.getCell(7 + numMonths + 9).value = {
+      formula: `IFERROR(${getColumnLetter(7 + numMonths + 3)}${currentRowNum}/SUM(${getColumnLetter(7)}${currentRowNum}:${getColumnLetter(7 + monthNumber(report.reportMonth) - 1)}${currentRowNum}), 0)`
+    };
+    excelRow.getCell(7 + numMonths + 10).value = {
+      formula: `IFERROR(${getColumnLetter(7 + numMonths - 1)}${currentRowNum}/${getColumnLetter(7 + monthNumber(report.reportMonth) - 1)}${currentRowNum}, 0)`
+    };
 
     styleDataCells(excelRow, 1, endCol);
     formatQecRow(excelRow, numMonths);
@@ -321,20 +488,40 @@ function addQecWorksheet(workbook: ExcelJS.Workbook, report: QecReport): void {
 
   // Dòng TOTAL Customer Detail
   const custTotalRow = sheet.getRow(currentRowNum);
-  const totalCustData = totalMetricRow("TOTAL", report.customerBaseRows, report.periodMonths, report.reportMonth);
   custTotalRow.getCell(2).value = "TOTAL";
   report.periodMonths.forEach((month, idx) => {
-    custTotalRow.getCell(7 + idx).value = totalCustData.monthValues[month] ?? 0;
+    custTotalRow.getCell(7 + idx).value = {
+      formula: `SUM(${getColumnLetter(7 + idx)}${custStartRow}:${getColumnLetter(7 + idx)}${currentRowNum - 1})`
+    };
   });
-  custTotalRow.getCell(7 + numMonths + 2).value = totalCustData.previousYearTotal;
-  custTotalRow.getCell(7 + numMonths + 3).value = totalCustData.currentYearTotal;
-  custTotalRow.getCell(7 + numMonths + 4).value = totalCustData.p3m;
-  custTotalRow.getCell(7 + numMonths + 5).value = totalCustData.p6m;
-  custTotalRow.getCell(7 + numMonths + 6).value = totalCustData.p9m;
-  custTotalRow.getCell(7 + numMonths + 7).value = totalCustData.trend;
-  custTotalRow.getCell(7 + numMonths + 8).value = totalCustData.ifytd;
-  custTotalRow.getCell(7 + numMonths + 9).value = totalCustData.icytd;
-  custTotalRow.getCell(7 + numMonths + 10).value = totalCustData.iya;
+  custTotalRow.getCell(7 + numMonths + 2).value = {
+    formula: `SUM(${getColumnLetter(7 + numMonths + 2)}${custStartRow}:${getColumnLetter(7 + numMonths + 2)}${currentRowNum - 1})`
+  };
+  custTotalRow.getCell(7 + numMonths + 3).value = {
+    formula: `SUM(${getColumnLetter(7 + numMonths + 3)}${custStartRow}:${getColumnLetter(7 + numMonths + 3)}${currentRowNum - 1})`
+  };
+  custTotalRow.getCell(7 + numMonths + 4).value = {
+    formula: `SUM(${getColumnLetter(7 + numMonths + 4)}${custStartRow}:${getColumnLetter(7 + numMonths + 4)}${currentRowNum - 1})`
+  };
+  custTotalRow.getCell(7 + numMonths + 5).value = {
+    formula: `SUM(${getColumnLetter(7 + numMonths + 5)}${custStartRow}:${getColumnLetter(7 + numMonths + 5)}${currentRowNum - 1})`
+  };
+  custTotalRow.getCell(7 + numMonths + 6).value = {
+    formula: `SUM(${getColumnLetter(7 + numMonths + 6)}${custStartRow}:${getColumnLetter(7 + numMonths + 6)}${currentRowNum - 1})`
+  };
+
+  custTotalRow.getCell(7 + numMonths + 7).value = {
+    formula: `IFERROR((${getColumnLetter(7 + numMonths + 4)}${currentRowNum}*2)/(${getColumnLetter(7 + numMonths + 5)}${currentRowNum}+${getColumnLetter(7 + numMonths + 6)}${currentRowNum}), 0)`
+  };
+  custTotalRow.getCell(7 + numMonths + 8).value = {
+    formula: `IFERROR(${getColumnLetter(7 + numMonths + 3)}${currentRowNum}/SUM(${getColumnLetter(7)}${currentRowNum}:${getColumnLetter(7 + monthNumber(report.reportMonth) - 1)}${currentRowNum}), 0)`
+  };
+  custTotalRow.getCell(7 + numMonths + 9).value = {
+    formula: `IFERROR(${getColumnLetter(7 + numMonths + 3)}${currentRowNum}/SUM(${getColumnLetter(7)}${currentRowNum}:${getColumnLetter(7 + monthNumber(report.reportMonth) - 1)}${currentRowNum}), 0)`
+  };
+  custTotalRow.getCell(7 + numMonths + 10).value = {
+    formula: `IFERROR(${getColumnLetter(7 + numMonths - 1)}${currentRowNum}/${getColumnLetter(7 + monthNumber(report.reportMonth) - 1)}${currentRowNum}, 0)`
+  };
 
   styleTotalCells(custTotalRow, 1, endCol);
   formatQecRow(custTotalRow, numMonths);
