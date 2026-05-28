@@ -6,6 +6,7 @@ import { displayMonth, type MonthKey } from "../domain/month";
 import { readSourceWorkbook } from "../infrastructure/excel/readSourceWorkbook";
 import { writeReportWorkbook } from "../infrastructure/excel/writeReportWorkbook";
 import { downloadBlob, formatDate, formatNumber, formatRatio } from "../shared/formatters";
+import { MasterplanPanel } from "./MasterplanPanel";
 
 type PreviewTab = "qec" | "sku" | "customerRevenue" | "customerQuantity" | "skuCustomerRevenue" | "skuCustomerQuantity" | "dataSource";
 
@@ -17,6 +18,9 @@ export function App() {
   const [isReading, setIsReading] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const [activeView, setActiveView] = useState<"qec" | "masterplan">("qec");
+  const [isMpExporting, setIsMpExporting] = useState(false);
 
   const report = useMemo(() => {
     if (!source || !reportMonth) {
@@ -74,6 +78,20 @@ export function App() {
     }
   }
 
+  async function handleMasterplanExport(data: any) {
+    setIsMpExporting(true);
+    setError(null);
+    try {
+      const { writeMasterplanWorkbook } = await import("../infrastructure/excel/writeMasterplanWorkbook");
+      const blob = await writeMasterplanWorkbook(data);
+      downloadBlob(blob, `Masterplan_${data.startYear}.xlsx`);
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Không xuất được file Excel Masterplan.");
+    } finally {
+      setIsMpExporting(false);
+    }
+  }
+
   return (
     <main className="app-shell">
       <section className="topbar">
@@ -83,6 +101,23 @@ export function App() {
             <h1>QEC Export Builder</h1>
             <p>Excel review export</p>
           </div>
+        </div>
+
+        <div className="view-selector">
+          <button
+            className={activeView === "qec" ? "view-btn active" : "view-btn"}
+            type="button"
+            onClick={() => setActiveView("qec")}
+          >
+            Báo cáo QEC
+          </button>
+          <button
+            className={activeView === "masterplan" ? "view-btn active" : "view-btn"}
+            type="button"
+            onClick={() => setActiveView("masterplan")}
+          >
+            Tạo Masterplan
+          </button>
         </div>
 
         <div className="actions">
@@ -97,21 +132,24 @@ export function App() {
             {isReading ? <Loader2 className="spin" aria-hidden="true" /> : <Upload aria-hidden="true" />}
             {isReading ? "Đang đọc" : "Upload Excel"}
           </button>
-          <button className="primary-button" type="button" onClick={() => void handleExport()} disabled={!report || report instanceof Error || isExporting}>
-            {isExporting ? <Loader2 className="spin" aria-hidden="true" /> : <Download aria-hidden="true" />}
-            Export
-          </button>
+          {activeView === "qec" && (
+            <button className="primary-button" type="button" onClick={() => void handleExport()} disabled={!report || report instanceof Error || isExporting}>
+              {isExporting ? <Loader2 className="spin" aria-hidden="true" /> : <Download aria-hidden="true" />}
+              Export
+            </button>
+          )}
         </div>
       </section>
 
-      {error || report instanceof Error ? (
+      {error || (activeView === "qec" && report instanceof Error) ? (
         <section className="notice error-notice">
           <AlertTriangle aria-hidden="true" />
           <span>{error || (report as Error).message}</span>
         </section>
       ) : null}
 
-      <section className="workspace">
+      {activeView === "qec" ? (
+        <section className="workspace">
         <aside className="control-panel">
           <div className="panel-section">
             <span className="section-label">Nguồn dữ liệu</span>
@@ -249,6 +287,13 @@ export function App() {
           )}
         </section>
       </section>
+      ) : (
+        <MasterplanPanel
+          source={source}
+          onExport={handleMasterplanExport}
+          isExporting={isMpExporting}
+        />
+      )}
     </main>
   );
 }

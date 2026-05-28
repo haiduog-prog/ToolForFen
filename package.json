@@ -17,6 +17,7 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@types/node": "^25.9.1",
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "@vitejs/plugin-react": "^6.0.2",
