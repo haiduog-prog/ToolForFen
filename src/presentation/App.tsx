@@ -372,49 +372,135 @@ function MetricTable({
 
 function CustomerPreview({ report, kind }: { report: QecReport; kind: "revenue" | "quantity" }) {
   const sections = kind === "revenue" ? report.customerRevenueSections : report.customerQuantitySections;
-  const rows = sections.slice(0, 12).flatMap((section) => {
-    return section.rows.slice(0, 6).map((row) => ({
-      customer: section.customer,
-      row
-    }));
+  
+  // State quản lý khách hàng được chọn
+  const [selectedCustomer, setSelectedCustomer] = useState<string>(() => {
+    return sections[0]?.customer ?? "";
   });
 
+  // Nếu danh sách rỗng
+  if (sections.length === 0) {
+    return (
+      <div className="empty-state">
+        <span>Không có dữ liệu khách hàng</span>
+      </div>
+    );
+  }
+
+  // Tìm section tương ứng với khách hàng được chọn
+  const currentSection = sections.find(s => s.customer === selectedCustomer) ?? sections[0]!;
+
+  // Tìm index hiện tại để làm nút Prev/Next
+  const currentIndex = sections.findIndex(s => s.customer === selectedCustomer);
+
+  function handlePrev() {
+    if (currentIndex > 0) {
+      setSelectedCustomer(sections[currentIndex - 1]!.customer);
+    }
+  }
+
+  function handleNext() {
+    if (currentIndex < sections.length - 1) {
+      setSelectedCustomer(sections[currentIndex + 1]!.customer);
+    }
+  }
+
   return (
-    <div className="table-wrap">
-      <table className="data-table">
-        <thead>
-          <tr>
-            <th>Customer</th>
-            <th>Name SKU</th>
-            {report.periodMonths.map((month) => (
-              <th key={month}>{displayMonth(month)}</th>
-            ))}
-            <th>{report.previousYear}</th>
-            <th>{report.currentYear}</th>
-            <th>P3M</th>
-            <th>P6M</th>
-            <th>P9M</th>
-            <th>TREND</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map(({ customer, row }) => (
-            <tr key={`${customer}-${row.label}`}>
-              <th>{customer}</th>
-              <th>{row.label}</th>
-              {report.periodMonths.map((month) => (
-                <td key={month}>{formatNumber(row.monthValues[month] ?? 0, kind === "quantity" ? 2 : 0)}</td>
+    <div className="customer-preview-container">
+      <div className="customer-selector-bar">
+        <div className="selector-left">
+          <span className="field-label">Chọn Khách hàng</span>
+          <div className="selector-controls">
+            <button 
+              className="nav-btn" 
+              type="button" 
+              onClick={handlePrev} 
+              disabled={currentIndex <= 0}
+              title="Khách hàng trước"
+            >
+              <ChevronLeft aria-hidden="true" />
+            </button>
+            <select
+              value={selectedCustomer}
+              onChange={(e) => setSelectedCustomer(e.target.value)}
+              className="customer-select"
+            >
+              {sections.map((sec) => (
+                <option key={sec.customer} value={sec.customer}>
+                  {sec.customer}
+                </option>
               ))}
-              <td>{formatNumber(row.previousYearTotal, kind === "quantity" ? 2 : 0)}</td>
-              <td>{formatNumber(row.currentYearTotal, kind === "quantity" ? 2 : 0)}</td>
-              <td>{formatNumber(row.p3m, kind === "quantity" ? 2 : 0)}</td>
-              <td>{formatNumber(row.p6m, kind === "quantity" ? 2 : 0)}</td>
-              <td>{formatNumber(row.p9m, kind === "quantity" ? 2 : 0)}</td>
-              <td>{formatRatio(row.trend)}</td>
+            </select>
+            <button 
+              className="nav-btn" 
+              type="button" 
+              onClick={handleNext} 
+              disabled={currentIndex >= sections.length - 1}
+              title="Khách hàng tiếp theo"
+            >
+              <ChevronRight aria-hidden="true" />
+            </button>
+          </div>
+        </div>
+        <div className="selector-right">
+          <div className="customer-info-badge">
+            Tổng cộng: <strong>{sections.length}</strong> khách hàng
+          </div>
+        </div>
+      </div>
+
+      <div className="table-wrap">
+        <table className="data-table">
+          <thead>
+            <tr>
+              <th className="sticky-col">Name SKU</th>
+              {report.periodMonths.map((month) => (
+                <th key={month}>{displayMonth(month)}</th>
+              ))}
+              <th>{report.previousYear}</th>
+              <th>{report.currentYear}</th>
+              <th>P3M</th>
+              <th>P6M</th>
+              <th>P9M</th>
+              <th>TREND</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {currentSection.rows.map((row) => (
+              <tr key={row.label}>
+                <th className="sticky-col text-left">{row.label}</th>
+                {report.periodMonths.map((month) => (
+                  <td key={month}>{formatNumber(row.monthValues[month] ?? 0, kind === "quantity" ? 2 : 0)}</td>
+                ))}
+                <td>{formatNumber(row.previousYearTotal, kind === "quantity" ? 2 : 0)}</td>
+                <td>{formatNumber(row.currentYearTotal, kind === "quantity" ? 2 : 0)}</td>
+                <td>{formatNumber(row.p3m, kind === "quantity" ? 2 : 0)}</td>
+                <td>{formatNumber(row.p6m, kind === "quantity" ? 2 : 0)}</td>
+                <td>{formatNumber(row.p9m, kind === "quantity" ? 2 : 0)}</td>
+                <td>{formatRatio(row.trend)}</td>
+              </tr>
+            ))}
+            
+            {/* Dòng Total của riêng khách hàng này */}
+            {currentSection.total ? (
+              <tr className="total-row">
+                <th className="sticky-col text-left">TOTAL</th>
+                {report.periodMonths.map((month) => (
+                  <td key={month}>
+                    {formatNumber(currentSection.total.monthValues[month] ?? 0, kind === "quantity" ? 2 : 0)}
+                  </td>
+                ))}
+                <td>{formatNumber(currentSection.total.previousYearTotal, kind === "quantity" ? 2 : 0)}</td>
+                <td>{formatNumber(currentSection.total.currentYearTotal, kind === "quantity" ? 2 : 0)}</td>
+                <td>{formatNumber(currentSection.total.p3m, kind === "quantity" ? 2 : 0)}</td>
+                <td>{formatNumber(currentSection.total.p6m, kind === "quantity" ? 2 : 0)}</td>
+                <td>{formatNumber(currentSection.total.p9m, kind === "quantity" ? 2 : 0)}</td>
+                <td>{formatRatio(currentSection.total.trend)}</td>
+              </tr>
+            ) : null}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
