@@ -45,14 +45,20 @@ function addQecWorksheet(workbook: ExcelJS.Workbook, report: QecReport): void {
     views: [{ state: "frozen", ySplit: 1, xSplit: 6 }]
   });
 
-  // Set standard column widths to match chuan.xlsx as closely as possible
+  const numMonths = report.periodMonths.length;
+  const endCol = 7 + numMonths + 10;
+
+  // Set standard column widths dynamically
   const colWidths = [
-    12.57, 73.43, 13.43, 24.57, 26.57, 21.57, // C1-C6
-    14.43, 14.43, 14.43, 14.43, 14.43, 14.43, 14.43, 14.43, 15, 15, 15, 14.43, 15, 15, 15, 15, // C7-C22 (16 months)
-    21, 21, // C23-C24 (Share)
-    15.43, 15.43, // C25-C26 (Total)
-    14.43, 14.43, 14.43, 10.14, 9.43, 9.57, 6.57 // C27-C33 (metrics)
+    12.57, 73.43, 13.43, 24.57, 26.57, 21.57 // C1-C6
   ];
+  for (let i = 0; i < numMonths; i++) {
+    colWidths.push(14.43); // Cột tháng
+  }
+  colWidths.push(21, 21); // Share
+  colWidths.push(15.43, 15.43); // Total
+  colWidths.push(14.43, 14.43, 14.43, 10.14, 9.43, 9.57, 6.57); // các metrics
+  
   colWidths.forEach((w, i) => {
     sheet.getColumn(i + 1).width = w;
   });
@@ -65,18 +71,20 @@ function addQecWorksheet(workbook: ExcelJS.Workbook, report: QecReport): void {
   report.periodMonths.forEach((month, idx) => {
     segHeaderRow.getCell(7 + idx).value = displayMonth(month);
   });
-  segHeaderRow.getCell(23).value = report.previousYear;
-  segHeaderRow.getCell(24).value = report.currentYear;
-  segHeaderRow.getCell(25).value = report.previousYear;
-  segHeaderRow.getCell(26).value = report.currentYear;
-  segHeaderRow.getCell(27).value = "P3M";
-  segHeaderRow.getCell(28).value = "P6M";
-  segHeaderRow.getCell(29).value = "P9M";
-  segHeaderRow.getCell(30).value = "TREND";
-  segHeaderRow.getCell(31).value = "IFYTD";
-  segHeaderRow.getCell(32).value = "ICYTD";
-  segHeaderRow.getCell(33).value = "IYA";
-  styleHeaderCells(segHeaderRow, 6, 33);
+  
+  segHeaderRow.getCell(7 + numMonths).value = report.previousYear;
+  segHeaderRow.getCell(7 + numMonths + 1).value = report.currentYear;
+  segHeaderRow.getCell(7 + numMonths + 2).value = report.previousYear;
+  segHeaderRow.getCell(7 + numMonths + 3).value = report.currentYear;
+  segHeaderRow.getCell(7 + numMonths + 4).value = "P3M";
+  segHeaderRow.getCell(7 + numMonths + 5).value = "P6M";
+  segHeaderRow.getCell(7 + numMonths + 6).value = "P9M";
+  segHeaderRow.getCell(7 + numMonths + 7).value = "TREND";
+  segHeaderRow.getCell(7 + numMonths + 8).value = "IFYTD";
+  segHeaderRow.getCell(7 + numMonths + 9).value = "ICYTD";
+  segHeaderRow.getCell(7 + numMonths + 10).value = "IYA";
+  
+  styleHeaderCells(segHeaderRow, 6, endCol);
   currentRowNum++;
 
   for (let i = 0; i < report.qecRows.length; i++) {
@@ -86,23 +94,23 @@ function addQecWorksheet(workbook: ExcelJS.Workbook, report: QecReport): void {
     report.periodMonths.forEach((month, idx) => {
       excelRow.getCell(7 + idx).value = rowData.monthValues[month] ?? 0;
     });
-    excelRow.getCell(23).value = rowData.previousYearShare ?? 0;
-    excelRow.getCell(24).value = rowData.currentYearShare ?? 0;
-    excelRow.getCell(25).value = rowData.previousYearTotal;
-    excelRow.getCell(26).value = rowData.currentYearTotal;
-    excelRow.getCell(27).value = rowData.p3m;
-    excelRow.getCell(28).value = rowData.p6m;
-    excelRow.getCell(29).value = rowData.p9m;
-    excelRow.getCell(30).value = rowData.trend;
-    excelRow.getCell(31).value = rowData.ifytd;
-    excelRow.getCell(32).value = rowData.icytd;
-    excelRow.getCell(33).value = rowData.iya;
+    excelRow.getCell(7 + numMonths).value = rowData.previousYearShare ?? 0;
+    excelRow.getCell(7 + numMonths + 1).value = rowData.currentYearShare ?? 0;
+    excelRow.getCell(7 + numMonths + 2).value = rowData.previousYearTotal;
+    excelRow.getCell(7 + numMonths + 3).value = rowData.currentYearTotal;
+    excelRow.getCell(7 + numMonths + 4).value = rowData.p3m;
+    excelRow.getCell(7 + numMonths + 5).value = rowData.p6m;
+    excelRow.getCell(7 + numMonths + 6).value = rowData.p9m;
+    excelRow.getCell(7 + numMonths + 7).value = rowData.trend;
+    excelRow.getCell(7 + numMonths + 8).value = rowData.ifytd;
+    excelRow.getCell(7 + numMonths + 9).value = rowData.icytd;
+    excelRow.getCell(7 + numMonths + 10).value = rowData.iya;
 
-    styleDataCells(excelRow, 6, 33);
-    formatQecRow(excelRow);
+    styleDataCells(excelRow, 6, endCol);
+    formatQecRow(excelRow, numMonths);
 
     if (rowData.label === "Total") {
-      styleTotalCells(excelRow, 6, 33);
+      styleTotalCells(excelRow, 6, endCol);
     }
     currentRowNum++;
   }
@@ -112,11 +120,11 @@ function addQecWorksheet(workbook: ExcelJS.Workbook, report: QecReport): void {
   r12.getCell(6).value = 1;
   r12.getCell(7).value = 56;
   r12.getCell(8).value = 56;
-  r12.getCell(23).value = 57;
-  r12.getCell(25).value = 62;
-  r12.getCell(27).value = 56;
-  r12.getCell(28).value = 55.25;
-  r12.getCell(29).value = 53.857142857142854;
+  r12.getCell(7 + numMonths).value = 57;
+  r12.getCell(7 + numMonths + 2).value = 62;
+  r12.getCell(7 + numMonths + 4).value = 56;
+  r12.getCell(7 + numMonths + 5).value = 55.25;
+  r12.getCell(7 + numMonths + 6).value = 53.857142857142854;
   r12.height = 14.25;
   currentRowNum++;
 
@@ -126,16 +134,16 @@ function addQecWorksheet(workbook: ExcelJS.Workbook, report: QecReport): void {
   report.periodMonths.forEach((month, idx) => {
     regHeaderRow.getCell(7 + idx).value = displayMonth(month);
   });
-  regHeaderRow.getCell(25).value = report.previousYear;
-  regHeaderRow.getCell(26).value = report.currentYear;
-  regHeaderRow.getCell(27).value = "P3M";
-  regHeaderRow.getCell(28).value = "P6M";
-  regHeaderRow.getCell(29).value = "P9M";
-  regHeaderRow.getCell(30).value = "TREND";
-  regHeaderRow.getCell(31).value = "IFYTD";
-  regHeaderRow.getCell(32).value = "ICYTD";
-  regHeaderRow.getCell(33).value = "IYA";
-  styleHeaderCells(regHeaderRow, 6, 33);
+  regHeaderRow.getCell(7 + numMonths + 2).value = report.previousYear;
+  regHeaderRow.getCell(7 + numMonths + 3).value = report.currentYear;
+  regHeaderRow.getCell(7 + numMonths + 4).value = "P3M";
+  regHeaderRow.getCell(7 + numMonths + 5).value = "P6M";
+  regHeaderRow.getCell(7 + numMonths + 6).value = "P9M";
+  regHeaderRow.getCell(7 + numMonths + 7).value = "TREND";
+  regHeaderRow.getCell(7 + numMonths + 8).value = "IFYTD";
+  regHeaderRow.getCell(7 + numMonths + 9).value = "ICYTD";
+  regHeaderRow.getCell(7 + numMonths + 10).value = "IYA";
+  styleHeaderCells(regHeaderRow, 6, endCol);
   currentRowNum++;
 
   const regionNames = [
@@ -149,34 +157,34 @@ function addQecWorksheet(workbook: ExcelJS.Workbook, report: QecReport): void {
   for (let i = 0; i < regionNames.length; i++) {
     const excelRow = sheet.getRow(currentRowNum);
     excelRow.getCell(6).value = regionNames[i];
-    for (let c = 7; c <= 33; c++) {
-      if (c === 23 || c === 24) continue;
+    for (let c = 7; c <= endCol; c++) {
+      if (c === 7 + numMonths || c === 7 + numMonths + 1) continue;
       excelRow.getCell(c).value = 0;
     }
-    styleDataCells(excelRow, 6, 33);
-    formatQecRow(excelRow);
+    styleDataCells(excelRow, 6, endCol);
+    formatQecRow(excelRow, numMonths);
     currentRowNum++;
   }
 
   // Dòng Total Region
   const regTotalRow = sheet.getRow(currentRowNum);
   regTotalRow.getCell(6).value = "Total";
-  for (let c = 7; c <= 33; c++) {
-    if (c === 23 || c === 24) continue;
+  for (let c = 7; c <= endCol; c++) {
+    if (c === 7 + numMonths || c === 7 + numMonths + 1) continue;
     regTotalRow.getCell(c).value = 0;
   }
-  styleTotalCells(regTotalRow, 6, 33);
-  formatQecRow(regTotalRow);
+  styleTotalCells(regTotalRow, 6, endCol);
+  formatQecRow(regTotalRow, numMonths);
   currentRowNum++;
 
   // --- DÒNG ẨN ---
   const r21 = sheet.getRow(currentRowNum);
   r21.getCell(7).value = 34;
   r21.getCell(8).value = 38;
-  r21.getCell(25).value = 194;
-  r21.getCell(27).value = 38;
-  r21.getCell(28).value = 24;
-  r21.getCell(29).value = 26.285714285714285;
+  r21.getCell(7 + numMonths + 2).value = 194;
+  r21.getCell(7 + numMonths + 4).value = 38;
+  r21.getCell(7 + numMonths + 5).value = 24;
+  r21.getCell(7 + numMonths + 6).value = 26.285714285714285;
   r21.height = 14.25;
   r21.hidden = true;
   currentRowNum++;
@@ -189,16 +197,16 @@ function addQecWorksheet(workbook: ExcelJS.Workbook, report: QecReport): void {
   report.periodMonths.forEach((month, idx) => {
     dsrHeaderRow.getCell(7 + idx).value = displayMonth(month);
   });
-  dsrHeaderRow.getCell(25).value = report.previousYear;
-  dsrHeaderRow.getCell(26).value = report.currentYear;
-  dsrHeaderRow.getCell(27).value = "P3M";
-  dsrHeaderRow.getCell(28).value = "P6M";
-  dsrHeaderRow.getCell(29).value = "P9M";
-  dsrHeaderRow.getCell(30).value = "TREND";
-  dsrHeaderRow.getCell(31).value = "IFYTD";
-  dsrHeaderRow.getCell(32).value = "ICYTD";
-  dsrHeaderRow.getCell(33).value = "IYA";
-  styleHeaderCells(dsrHeaderRow, 4, 33);
+  dsrHeaderRow.getCell(7 + numMonths + 2).value = report.previousYear;
+  dsrHeaderRow.getCell(7 + numMonths + 3).value = report.currentYear;
+  dsrHeaderRow.getCell(7 + numMonths + 4).value = "P3M";
+  dsrHeaderRow.getCell(7 + numMonths + 5).value = "P6M";
+  dsrHeaderRow.getCell(7 + numMonths + 6).value = "P9M";
+  dsrHeaderRow.getCell(7 + numMonths + 7).value = "TREND";
+  dsrHeaderRow.getCell(7 + numMonths + 8).value = "IFYTD";
+  dsrHeaderRow.getCell(7 + numMonths + 9).value = "ICYTD";
+  dsrHeaderRow.getCell(7 + numMonths + 10).value = "IYA";
+  styleHeaderCells(dsrHeaderRow, 4, endCol);
   currentRowNum++;
 
   const dsrMeta = [
@@ -217,18 +225,18 @@ function addQecWorksheet(workbook: ExcelJS.Workbook, report: QecReport): void {
     report.periodMonths.forEach((month, idx) => {
       excelRow.getCell(7 + idx).value = rowData.monthValues[month] ?? 0;
     });
-    excelRow.getCell(25).value = rowData.previousYearTotal;
-    excelRow.getCell(26).value = rowData.currentYearTotal;
-    excelRow.getCell(27).value = rowData.p3m;
-    excelRow.getCell(28).value = rowData.p6m;
-    excelRow.getCell(29).value = rowData.p9m;
-    excelRow.getCell(30).value = rowData.trend;
-    excelRow.getCell(31).value = rowData.ifytd;
-    excelRow.getCell(32).value = rowData.icytd;
-    excelRow.getCell(33).value = rowData.iya;
+    excelRow.getCell(7 + numMonths + 2).value = rowData.previousYearTotal;
+    excelRow.getCell(7 + numMonths + 3).value = rowData.currentYearTotal;
+    excelRow.getCell(7 + numMonths + 4).value = rowData.p3m;
+    excelRow.getCell(7 + numMonths + 5).value = rowData.p6m;
+    excelRow.getCell(7 + numMonths + 6).value = rowData.p9m;
+    excelRow.getCell(7 + numMonths + 7).value = rowData.trend;
+    excelRow.getCell(7 + numMonths + 8).value = rowData.ifytd;
+    excelRow.getCell(7 + numMonths + 9).value = rowData.icytd;
+    excelRow.getCell(7 + numMonths + 10).value = rowData.iya;
 
-    styleDataCells(excelRow, 4, 33);
-    formatQecRow(excelRow);
+    styleDataCells(excelRow, 4, endCol);
+    formatQecRow(excelRow, numMonths);
     currentRowNum++;
   }
 
@@ -241,26 +249,26 @@ function addQecWorksheet(workbook: ExcelJS.Workbook, report: QecReport): void {
   report.periodMonths.forEach((month, idx) => {
     dsrTotalRow.getCell(7 + idx).value = totalDsrData ? (totalDsrData.monthValues[month] ?? 0) : 0;
   });
-  dsrTotalRow.getCell(25).value = totalDsrData ? totalDsrData.previousYearTotal : 0;
-  dsrTotalRow.getCell(26).value = totalDsrData ? totalDsrData.currentYearTotal : 0;
-  dsrTotalRow.getCell(27).value = totalDsrData ? totalDsrData.p3m : 0;
-  dsrTotalRow.getCell(28).value = totalDsrData ? totalDsrData.p6m : 0;
-  dsrTotalRow.getCell(29).value = totalDsrData ? totalDsrData.p9m : 0;
-  dsrTotalRow.getCell(30).value = totalDsrData ? totalDsrData.trend : 0;
-  dsrTotalRow.getCell(31).value = totalDsrData ? totalDsrData.ifytd : 0;
-  dsrTotalRow.getCell(32).value = totalDsrData ? totalDsrData.icytd : 0;
-  dsrTotalRow.getCell(33).value = totalDsrData ? totalDsrData.iya : 0;
-  styleTotalCells(dsrTotalRow, 4, 33);
-  formatQecRow(dsrTotalRow);
+  dsrTotalRow.getCell(7 + numMonths + 2).value = totalDsrData ? totalDsrData.previousYearTotal : 0;
+  dsrTotalRow.getCell(7 + numMonths + 3).value = totalDsrData ? totalDsrData.currentYearTotal : 0;
+  dsrTotalRow.getCell(7 + numMonths + 4).value = totalDsrData ? totalDsrData.p3m : 0;
+  dsrTotalRow.getCell(7 + numMonths + 5).value = totalDsrData ? totalDsrData.p6m : 0;
+  dsrTotalRow.getCell(7 + numMonths + 6).value = totalDsrData ? totalDsrData.p9m : 0;
+  dsrTotalRow.getCell(7 + numMonths + 7).value = totalDsrData ? totalDsrData.trend : 0;
+  dsrTotalRow.getCell(7 + numMonths + 8).value = totalDsrData ? totalDsrData.ifytd : 0;
+  dsrTotalRow.getCell(7 + numMonths + 9).value = totalDsrData ? totalDsrData.icytd : 0;
+  dsrTotalRow.getCell(7 + numMonths + 10).value = totalDsrData ? totalDsrData.iya : 0;
+  styleTotalCells(dsrTotalRow, 4, endCol);
+  formatQecRow(dsrTotalRow, numMonths);
   currentRowNum++;
 
   // --- DÒNG TĨNH ---
   const r27 = sheet.getRow(currentRowNum);
   r27.getCell(7).value = 39;
   r27.getCell(8).value = 43;
-  r27.getCell(26).value = 0;
-  r27.getCell(32).value = 0.6267029972752044;
-  r27.getCell(33).value = 0;
+  r27.getCell(7 + numMonths + 3).value = 0;
+  r27.getCell(7 + numMonths + 9).value = 0.6267029972752044;
+  r27.getCell(7 + numMonths + 10).value = 0;
   r27.height = 14.25;
   currentRowNum++;
 
@@ -275,16 +283,16 @@ function addQecWorksheet(workbook: ExcelJS.Workbook, report: QecReport): void {
   report.periodMonths.forEach((month, idx) => {
     custHeaderRow.getCell(7 + idx).value = displayMonth(month);
   });
-  custHeaderRow.getCell(25).value = report.previousYear;
-  custHeaderRow.getCell(26).value = report.currentYear;
-  custHeaderRow.getCell(27).value = "P3M";
-  custHeaderRow.getCell(28).value = "P6M";
-  custHeaderRow.getCell(29).value = "P9M";
-  custHeaderRow.getCell(30).value = "TREND";
-  custHeaderRow.getCell(31).value = "IFYTD";
-  custHeaderRow.getCell(32).value = "ICYTD";
-  custHeaderRow.getCell(33).value = "IYA";
-  styleHeaderCells(custHeaderRow, 1, 33);
+  custHeaderRow.getCell(7 + numMonths + 2).value = report.previousYear;
+  custHeaderRow.getCell(7 + numMonths + 3).value = report.currentYear;
+  custHeaderRow.getCell(7 + numMonths + 4).value = "P3M";
+  custHeaderRow.getCell(7 + numMonths + 5).value = "P6M";
+  custHeaderRow.getCell(7 + numMonths + 6).value = "P9M";
+  custHeaderRow.getCell(7 + numMonths + 7).value = "TREND";
+  custHeaderRow.getCell(7 + numMonths + 8).value = "IFYTD";
+  custHeaderRow.getCell(7 + numMonths + 9).value = "ICYTD";
+  custHeaderRow.getCell(7 + numMonths + 10).value = "IYA";
+  styleHeaderCells(custHeaderRow, 1, endCol);
   currentRowNum++;
 
   for (let i = 0; i < report.customerBaseRows.length; i++) {
@@ -296,18 +304,18 @@ function addQecWorksheet(workbook: ExcelJS.Workbook, report: QecReport): void {
     report.periodMonths.forEach((month, idx) => {
       excelRow.getCell(7 + idx).value = rowData.monthValues[month] ?? 0;
     });
-    excelRow.getCell(25).value = rowData.previousYearTotal;
-    excelRow.getCell(26).value = rowData.currentYearTotal;
-    excelRow.getCell(27).value = rowData.p3m;
-    excelRow.getCell(28).value = rowData.p6m;
-    excelRow.getCell(29).value = rowData.p9m;
-    excelRow.getCell(30).value = rowData.trend;
-    excelRow.getCell(31).value = rowData.ifytd;
-    excelRow.getCell(32).value = rowData.icytd;
-    excelRow.getCell(33).value = rowData.iya;
+    excelRow.getCell(7 + numMonths + 2).value = rowData.previousYearTotal;
+    excelRow.getCell(7 + numMonths + 3).value = rowData.currentYearTotal;
+    excelRow.getCell(7 + numMonths + 4).value = rowData.p3m;
+    excelRow.getCell(7 + numMonths + 5).value = rowData.p6m;
+    excelRow.getCell(7 + numMonths + 6).value = rowData.p9m;
+    excelRow.getCell(7 + numMonths + 7).value = rowData.trend;
+    excelRow.getCell(7 + numMonths + 8).value = rowData.ifytd;
+    excelRow.getCell(7 + numMonths + 9).value = rowData.icytd;
+    excelRow.getCell(7 + numMonths + 10).value = rowData.iya;
 
-    styleDataCells(excelRow, 1, 33);
-    formatQecRow(excelRow);
+    styleDataCells(excelRow, 1, endCol);
+    formatQecRow(excelRow, numMonths);
     currentRowNum++;
   }
 
@@ -318,18 +326,18 @@ function addQecWorksheet(workbook: ExcelJS.Workbook, report: QecReport): void {
   report.periodMonths.forEach((month, idx) => {
     custTotalRow.getCell(7 + idx).value = totalCustData.monthValues[month] ?? 0;
   });
-  custTotalRow.getCell(25).value = totalCustData.previousYearTotal;
-  custTotalRow.getCell(26).value = totalCustData.currentYearTotal;
-  custTotalRow.getCell(27).value = totalCustData.p3m;
-  custTotalRow.getCell(28).value = totalCustData.p6m;
-  custTotalRow.getCell(29).value = totalCustData.p9m;
-  custTotalRow.getCell(30).value = totalCustData.trend;
-  custTotalRow.getCell(31).value = totalCustData.ifytd;
-  custTotalRow.getCell(32).value = totalCustData.icytd;
-  custTotalRow.getCell(33).value = totalCustData.iya;
+  custTotalRow.getCell(7 + numMonths + 2).value = totalCustData.previousYearTotal;
+  custTotalRow.getCell(7 + numMonths + 3).value = totalCustData.currentYearTotal;
+  custTotalRow.getCell(7 + numMonths + 4).value = totalCustData.p3m;
+  custTotalRow.getCell(7 + numMonths + 5).value = totalCustData.p6m;
+  custTotalRow.getCell(7 + numMonths + 6).value = totalCustData.p9m;
+  custTotalRow.getCell(7 + numMonths + 7).value = totalCustData.trend;
+  custTotalRow.getCell(7 + numMonths + 8).value = totalCustData.ifytd;
+  custTotalRow.getCell(7 + numMonths + 9).value = totalCustData.icytd;
+  custTotalRow.getCell(7 + numMonths + 10).value = totalCustData.iya;
 
-  styleTotalCells(custTotalRow, 1, 33);
-  formatQecRow(custTotalRow);
+  styleTotalCells(custTotalRow, 1, endCol);
+  formatQecRow(custTotalRow, numMonths);
 }
 
 function addSkuWorksheet(workbook: ExcelJS.Workbook, report: QecReport): void {
@@ -501,26 +509,34 @@ function addCustomerWorksheet(
   report: QecReport,
   valueKind: ValueKind
 ): void {
-  const sheet = workbook.addWorksheet(sheetName, {
-    views: [{ state: "frozen", ySplit: 3, xSplit: 4 }]
-  });
-
   const rawCustomers = report.customerRevenueSections.map((s) => s.customer);
   const customerNames = [...rawCustomers].sort((a, b) => a.localeCompare(b, "vi"));
   const products = valueKind === "money" ? report.skuRevenueRows : report.skuQuantityRows;
   const productNames = products.map((p) => p.label);
   const valueFormat = valueKind === "money" ? MONEY_FORMAT : QUANTITY_FORMAT;
+  const numMonths = report.periodMonths.length;
 
-  // Set widths
+  const sheet = workbook.addWorksheet(sheetName, {
+    views: [{ state: "frozen", ySplit: 3, xSplit: 4 }]
+  });
+
+  // Set widths dynamically
   sheet.getColumn(1).width = 15;
   sheet.getColumn(2).width = 50;
   sheet.getColumn(3).width = 5;
   sheet.getColumn(4).width = 50;
-  for (let c = 5; c <= 20; c++) sheet.getColumn(c).width = 14;
-  sheet.getColumn(21).width = 5;
-  sheet.getColumn(22).width = 16;
-  sheet.getColumn(23).width = 16;
-  for (let c = 24; c <= 30; c++) sheet.getColumn(c).width = 12;
+  const monthEnd = 5 + numMonths - 1;
+  for (let c = 5; c <= monthEnd; c++) sheet.getColumn(c).width = 14;
+  
+  const spacerCol = 5 + numMonths;
+  sheet.getColumn(spacerCol).width = 5;
+  
+  const indexStart = 5 + numMonths + 1;
+  sheet.getColumn(indexStart).width = 16;     // Previous Year Total
+  sheet.getColumn(indexStart + 1).width = 16; // Current Year Total
+  for (let c = indexStart + 2; c <= indexStart + 8; c++) {
+    sheet.getColumn(c).width = 12; // P3M..IYA
+  }
 
   // --- DÒNG 1 (Customer Dropdown) ---
   const r1 = sheet.getRow(1);
@@ -554,17 +570,22 @@ function addCustomerWorksheet(
   report.periodMonths.forEach((month, idx) => {
     headerRow.getCell(5 + idx).value = displayMonth(month);
   });
-  headerRow.getCell(22).value = report.previousYear;
-  headerRow.getCell(23).value = report.currentYear;
-  headerRow.getCell(24).value = "P3M";
-  headerRow.getCell(25).value = "P6M";
-  headerRow.getCell(26).value = "P9M";
-  headerRow.getCell(27).value = "TREND";
-  headerRow.getCell(28).value = "IFYTD";
-  headerRow.getCell(29).value = "ICYTD";
-  headerRow.getCell(30).value = "IYA";
+  
+  headerRow.getCell(indexStart).value = report.previousYear;
+  headerRow.getCell(indexStart + 1).value = report.currentYear;
+  headerRow.getCell(indexStart + 2).value = "P3M";
+  headerRow.getCell(indexStart + 3).value = "P6M";
+  headerRow.getCell(indexStart + 4).value = "P9M";
+  headerRow.getCell(indexStart + 5).value = "TREND";
+  headerRow.getCell(indexStart + 6).value = "IFYTD";
+  headerRow.getCell(indexStart + 7).value = "ICYTD";
+  headerRow.getCell(indexStart + 8).value = "IYA";
 
-  for (const c of [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 23, 24, 25, 26, 27, 28, 29, 30]) {
+  const colsToStyle = [4];
+  for (let c = 5; c <= monthEnd; c++) colsToStyle.push(c);
+  for (let c = indexStart; c <= indexStart + 8; c++) colsToStyle.push(c);
+
+  for (const c of colsToStyle) {
     const cell = headerRow.getCell(c);
     cell.font = { bold: true, color: { argb: "FFFFFFFF" } };
     cell.fill = HEADER_FILL;
@@ -588,53 +609,57 @@ function addCustomerWorksheet(
       };
     });
 
-    // Cột 22 (V - CY Y-1)
-    excelRow.getCell(22).value = {
-      formula: `SUM(${getColumnLetter(5)}${currentRowNum}:${getColumnLetter(16)}${currentRowNum})`
+    // Cột CY Y-1
+    excelRow.getCell(indexStart).value = {
+      formula: `SUM(${getColumnLetter(5)}${currentRowNum}:${getColumnLetter(5 + 11)}${currentRowNum})`
     };
 
-    // Cột 23 (W - CY Y)
-    excelRow.getCell(23).value = {
-      formula: `SUM(${getColumnLetter(17)}${currentRowNum}:${getColumnLetter(5 + report.periodMonths.length - 1)}${currentRowNum})`
+    // Cột CY Y
+    excelRow.getCell(indexStart + 1).value = {
+      formula: `SUM(${getColumnLetter(5 + 12)}${currentRowNum}:${getColumnLetter(monthEnd)}${currentRowNum})`
     };
 
-    // Cột 24 (X - P3M)
-    excelRow.getCell(24).value = {
-      formula: `AVERAGE(${getColumnLetter(5 + report.periodMonths.length - 3)}${currentRowNum}:${getColumnLetter(5 + report.periodMonths.length - 1)}${currentRowNum})`
+    // Cột P3M
+    excelRow.getCell(indexStart + 2).value = {
+      formula: `AVERAGE(${getColumnLetter(monthEnd - 2)}${currentRowNum}:${getColumnLetter(monthEnd)}${currentRowNum})`
     };
 
-    // Cột 25 (Y - P6M)
-    excelRow.getCell(25).value = {
-      formula: `AVERAGE(${getColumnLetter(5 + report.periodMonths.length - 6)}${currentRowNum}:${getColumnLetter(5 + report.periodMonths.length - 1)}${currentRowNum})`
+    // Cột P6M
+    excelRow.getCell(indexStart + 3).value = {
+      formula: `AVERAGE(${getColumnLetter(monthEnd - 5)}${currentRowNum}:${getColumnLetter(monthEnd)}${currentRowNum})`
     };
 
-    // Cột 26 (Z - P9M)
-    excelRow.getCell(26).value = {
-      formula: `AVERAGE(${getColumnLetter(5 + report.periodMonths.length - 9)}${currentRowNum}:${getColumnLetter(5 + report.periodMonths.length - 1)}${currentRowNum})`
+    // Cột P9M
+    excelRow.getCell(indexStart + 4).value = {
+      formula: `AVERAGE(${getColumnLetter(monthEnd - 8)}${currentRowNum}:${getColumnLetter(monthEnd)}${currentRowNum})`
     };
 
-    // Cột 27 (AA - TREND)
-    excelRow.getCell(27).value = {
-      formula: `IFERROR((X${currentRowNum}*2)/(Y${currentRowNum}+Z${currentRowNum}), 0)`
+    // Cột TREND
+    const p3mCol = getColumnLetter(indexStart + 2);
+    const p6mCol = getColumnLetter(indexStart + 3);
+    const p9mCol = getColumnLetter(indexStart + 4);
+    excelRow.getCell(indexStart + 5).value = {
+      formula: `IFERROR((${p3mCol}${currentRowNum}*2)/(${p6mCol}${currentRowNum}+${p9mCol}${currentRowNum}), 0)`
     };
 
-    // Cột 28 (AB - IFYTD)
-    excelRow.getCell(28).value = {
-      formula: `IFERROR(W${currentRowNum}/SUM(${getColumnLetter(5)}${currentRowNum}:${getColumnLetter(5 + monthNumber(report.reportMonth) - 1)}${currentRowNum}), 0)`
+    // Cột IFYTD
+    const cyYCol = getColumnLetter(indexStart + 1);
+    excelRow.getCell(indexStart + 6).value = {
+      formula: `IFERROR(${cyYCol}${currentRowNum}/SUM(${getColumnLetter(5)}${currentRowNum}:${getColumnLetter(5 + monthNumber(report.reportMonth) - 1)}${currentRowNum}), 0)`
     };
 
-    // Cột 29 (AC - ICYTD)
-    excelRow.getCell(29).value = {
-      formula: `IFERROR(W${currentRowNum}/SUM(${getColumnLetter(5)}${currentRowNum}:${getColumnLetter(5 + monthNumber(report.reportMonth) - 1)}${currentRowNum}), 0)`
+    // Cột ICYTD
+    excelRow.getCell(indexStart + 7).value = {
+      formula: `IFERROR(${cyYCol}${currentRowNum}/SUM(${getColumnLetter(5)}${currentRowNum}:${getColumnLetter(5 + monthNumber(report.reportMonth) - 1)}${currentRowNum}), 0)`
     };
 
-    // Cột 30 (AD - IYA)
-    excelRow.getCell(30).value = {
-      formula: `IFERROR(${getColumnLetter(5 + report.periodMonths.length - 1)}${currentRowNum}/${getColumnLetter(5 + monthNumber(report.reportMonth) - 1)}${currentRowNum}, 0)`
+    // Cột IYA
+    excelRow.getCell(indexStart + 8).value = {
+      formula: `IFERROR(${getColumnLetter(monthEnd)}${currentRowNum}/${getColumnLetter(5 + monthNumber(report.reportMonth) - 1)}${currentRowNum}, 0)`
     };
 
-    styleCustomerDataCells(excelRow);
-    formatCustomerProductRow(excelRow, valueFormat);
+    styleCustomerDataCells(excelRow, numMonths);
+    formatCustomerProductRow(excelRow, valueFormat, numMonths);
     excelRow.height = 20;
     currentRowNum++;
   });
@@ -650,49 +675,62 @@ function addCustomerWorksheet(
     };
   });
 
-  totalRow.getCell(22).value = {
-    formula: `SUM(V4:V${currentRowNum - 1})`
+  // Cột CY Y-1
+  totalRow.getCell(indexStart).value = {
+    formula: `SUM(${getColumnLetter(indexStart)}4:${getColumnLetter(indexStart)}${currentRowNum - 1})`
   };
 
-  totalRow.getCell(23).value = {
-    formula: `SUM(W4:W${currentRowNum - 1})`
+  // Cột CY Y
+  totalRow.getCell(indexStart + 1).value = {
+    formula: `SUM(${getColumnLetter(indexStart + 1)}4:${getColumnLetter(indexStart + 1)}${currentRowNum - 1})`
   };
 
-  totalRow.getCell(24).value = {
-    formula: `SUM(X4:X${currentRowNum - 1})`
+  // Cột P3M
+  totalRow.getCell(indexStart + 2).value = {
+    formula: `SUM(${getColumnLetter(indexStart + 2)}4:${getColumnLetter(indexStart + 2)}${currentRowNum - 1})`
   };
 
-  totalRow.getCell(25).value = {
-    formula: `SUM(Y4:Y${currentRowNum - 1})`
+  // Cột P6M
+  totalRow.getCell(indexStart + 3).value = {
+    formula: `SUM(${getColumnLetter(indexStart + 3)}4:${getColumnLetter(indexStart + 3)}${currentRowNum - 1})`
   };
 
-  totalRow.getCell(26).value = {
-    formula: `SUM(Z4:Z${currentRowNum - 1})`
+  // Cột P9M
+  totalRow.getCell(indexStart + 4).value = {
+    formula: `SUM(${getColumnLetter(indexStart + 4)}4:${getColumnLetter(indexStart + 4)}${currentRowNum - 1})`
   };
 
-  totalRow.getCell(27).value = {
-    formula: `IFERROR((X${currentRowNum}*2)/(Y${currentRowNum}+Z${currentRowNum}), 0)`
+  // Cột TREND
+  const p3mColTotal = getColumnLetter(indexStart + 2);
+  const p6mColTotal = getColumnLetter(indexStart + 3);
+  const p9mColTotal = getColumnLetter(indexStart + 4);
+  totalRow.getCell(indexStart + 5).value = {
+    formula: `IFERROR((${p3mColTotal}${currentRowNum}*2)/(${p6mColTotal}${currentRowNum}+${p9mColTotal}${currentRowNum}), 0)`
   };
 
-  totalRow.getCell(28).value = {
-    formula: `IFERROR(W${currentRowNum}/SUM(${getColumnLetter(5)}${currentRowNum}:${getColumnLetter(5 + monthNumber(report.reportMonth) - 1)}${currentRowNum}), 0)`
+  // Cột IFYTD
+  const cyYColTotal = getColumnLetter(indexStart + 1);
+  totalRow.getCell(indexStart + 6).value = {
+    formula: `IFERROR(${cyYColTotal}${currentRowNum}/SUM(${getColumnLetter(5)}${currentRowNum}:${getColumnLetter(5 + monthNumber(report.reportMonth) - 1)}${currentRowNum}), 0)`
   };
 
-  totalRow.getCell(29).value = {
-    formula: `IFERROR(W${currentRowNum}/SUM(${getColumnLetter(5)}${currentRowNum}:${getColumnLetter(5 + monthNumber(report.reportMonth) - 1)}${currentRowNum}), 0)`
+  // Cột ICYTD
+  totalRow.getCell(indexStart + 7).value = {
+    formula: `IFERROR(${cyYColTotal}${currentRowNum}/SUM(${getColumnLetter(5)}${currentRowNum}:${getColumnLetter(5 + monthNumber(report.reportMonth) - 1)}${currentRowNum}), 0)`
   };
 
-  totalRow.getCell(30).value = {
-    formula: `IFERROR(${getColumnLetter(5 + report.periodMonths.length - 1)}${currentRowNum}/${getColumnLetter(5 + monthNumber(report.reportMonth) - 1)}${currentRowNum}, 0)`
+  // Cột IYA
+  totalRow.getCell(indexStart + 8).value = {
+    formula: `IFERROR(${getColumnLetter(monthEnd)}${currentRowNum}/${getColumnLetter(5 + monthNumber(report.reportMonth) - 1)}${currentRowNum}, 0)`
   };
 
-  for (const c of [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 23, 24, 25, 26, 27, 28, 29, 30]) {
+  for (const c of colsToStyle) {
     const cell = totalRow.getCell(c);
     cell.font = { bold: true };
     cell.fill = TOTAL_FILL;
     cell.border = thinBorder();
   }
-  formatCustomerProductRow(totalRow, valueFormat);
+  formatCustomerProductRow(totalRow, valueFormat, numMonths);
   totalRow.height = 22;
 }
 
@@ -799,15 +837,31 @@ function styleDataCells(row: ExcelJS.Row, startCol: number, endCol: number): voi
   });
 }
 
-function styleCustomerDataCells(row: ExcelJS.Row): void {
-  for (const c of [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 23, 24, 25, 26, 27, 28, 29, 30]) {
+function styleCustomerDataCells(row: ExcelJS.Row, numMonths: number): void {
+  const monthEnd = 5 + numMonths - 1;
+  const indexStart = 5 + numMonths + 1;
+  const indexEnd = 5 + numMonths + 9;
+
+  row.getCell(4).border = thinBorder();
+  for (let c = 5; c <= monthEnd; c++) {
+    row.getCell(c).border = thinBorder();
+  }
+  for (let c = indexStart; c <= indexEnd; c++) {
     row.getCell(c).border = thinBorder();
   }
 }
 
-function styleCustomerHeader(row: ExcelJS.Row): void {
+function styleCustomerHeader(row: ExcelJS.Row, numMonths: number): void {
   row.height = 24;
-  for (const c of [1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 23, 24, 25, 26, 27, 28, 29, 30]) {
+  const monthEnd = 5 + numMonths - 1;
+  const indexStart = 5 + numMonths + 1;
+  const indexEnd = 5 + numMonths + 9;
+
+  const cols = [1, 2, 4];
+  for (let c = 5; c <= monthEnd; c++) cols.push(c);
+  for (let c = indexStart; c <= indexEnd; c++) cols.push(c);
+
+  for (const c of cols) {
     const cell = row.getCell(c);
     cell.font = { bold: true, color: { argb: "FFFFFFFF" } };
     cell.fill = HEADER_FILL;
@@ -816,20 +870,22 @@ function styleCustomerHeader(row: ExcelJS.Row): void {
   }
 }
 
-function formatQecRow(row: ExcelJS.Row): void {
-  // Cột 7-22: tháng
-  for (let c = 7; c <= 22; c++) {
+function formatQecRow(row: ExcelJS.Row, numMonths: number): void {
+  const lastMonthCol = 7 + numMonths - 1;
+  
+  // Cột tháng
+  for (let c = 7; c <= lastMonthCol; c++) {
     row.getCell(c).numFmt = MONEY_FORMAT;
   }
-  // Cột 23-24: share
-  row.getCell(23).numFmt = RATIO_FORMAT;
-  row.getCell(24).numFmt = RATIO_FORMAT;
-  // Cột 25-29: Total & P3M/P6M/P9M
-  for (let c = 25; c <= 29; c++) {
+  // Cột Share
+  row.getCell(lastMonthCol + 1).numFmt = RATIO_FORMAT;
+  row.getCell(lastMonthCol + 2).numFmt = RATIO_FORMAT;
+  // Cột Total & P3M/P6M/P9M
+  for (let c = lastMonthCol + 3; c <= lastMonthCol + 7; c++) {
     row.getCell(c).numFmt = MONEY_FORMAT;
   }
-  // Cột 30-33: ratio metrics
-  for (let c = 30; c <= 33; c++) {
+  // Cột metrics (TREND, IFYTD, ICYTD, IYA)
+  for (let c = lastMonthCol + 8; c <= lastMonthCol + 11; c++) {
     row.getCell(c).numFmt = RATIO_FORMAT;
   }
 }
@@ -849,17 +905,20 @@ function formatSkuRow(row: ExcelJS.Row, valueFormat: string): void {
   }
 }
 
-function formatCustomerProductRow(row: ExcelJS.Row, valueFormat: string): void {
-  // Cột 5-20: tháng
-  for (let c = 5; c <= 20; c++) {
+function formatCustomerProductRow(row: ExcelJS.Row, valueFormat: string, numMonths: number): void {
+  const monthEnd = 5 + numMonths - 1;
+  const indexStart = 5 + numMonths + 1;
+
+  // Cột tháng
+  for (let c = 5; c <= monthEnd; c++) {
     row.getCell(c).numFmt = valueFormat;
   }
-  // Cột 22-26: Total & P3M/P6M/P9M
-  for (let c = 22; c <= 26; c++) {
+  // Cột Total & P3M/P6M/P9M
+  for (let c = indexStart; c <= indexStart + 4; c++) {
     row.getCell(c).numFmt = valueFormat;
   }
-  // Cột 27-30: ratio metrics
-  for (let c = 27; c <= 30; c++) {
+  // Cột metrics (TREND, IFYTD, ICYTD, IYA)
+  for (let c = indexStart + 5; c <= indexStart + 8; c++) {
     row.getCell(c).numFmt = RATIO_FORMAT;
   }
 }
