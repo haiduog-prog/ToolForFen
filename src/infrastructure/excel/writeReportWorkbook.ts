@@ -1,6 +1,6 @@
 import type ExcelJS from "exceljs";
 import { type MetricRow, type QecReport, type SourceTransaction, type ValueKind } from "../../domain/entities";
-import { displayMonth, type MonthKey } from "../../domain/month";
+import { displayMonth, monthNumber, type MonthKey } from "../../domain/month";
 import { lookupSegment } from "../../domain/customerMapping";
 import { totalMetricRow } from "../../domain/reportCalculations";
 
@@ -15,6 +15,18 @@ export async function writeReportWorkbook(report: QecReport, sourceRows: SourceT
   const workbook = new ExcelJSModule.default.Workbook();
   workbook.creator = "QEC Export Builder";
   workbook.created = new Date();
+
+  // Tạo danh sách khách hàng duy nhất (đã lọc và sort)
+  const rawCustomers = report.customerRevenueSections.map(s => s.customer);
+  const customerNames = [...rawCustomers].sort((a, b) => a.localeCompare(b, "vi"));
+
+  // Tạo config sheet ẩn để làm data source cho dropdown
+  const configSheet = workbook.addWorksheet("Config");
+  configSheet.state = "hidden";
+  configSheet.getRow(1).getCell(1).value = "Customer List";
+  customerNames.forEach((name, idx) => {
+    configSheet.getRow(2 + idx).getCell(1).value = name;
+  });
 
   addQecWorksheet(workbook, report);
   addSkuWorksheet(workbook, report);
@@ -472,22 +484,32 @@ function addSkuWorksheet(workbook: ExcelJS.Workbook, report: QecReport): void {
   formatSkuRow(vndTotalExcelRow, MONEY_FORMAT);
 }
 
+function getColumnLetter(colNumber: number): string {
+  let temp = colNumber;
+  let letter = "";
+  while (temp > 0) {
+    const modulo = (temp - 1) % 26;
+    letter = String.fromCharCode(65 + modulo) + letter;
+    temp = Math.floor((temp - modulo) / 26);
+  }
+  return letter;
+}
+
 function addCustomerWorksheet(
   workbook: ExcelJS.Workbook,
   sheetName: string,
   report: QecReport,
   valueKind: ValueKind
 ): void {
-  const rawSections = valueKind === "money" ? report.customerRevenueSections : report.customerQuantitySections;
-  const valueFormat = valueKind === "money" ? MONEY_FORMAT : QUANTITY_FORMAT;
-
-  const sections = [...rawSections].sort((a, b) => {
-    return a.customer.localeCompare(b.customer, "vi");
-  });
-
   const sheet = workbook.addWorksheet(sheetName, {
-    views: [{ state: "frozen", ySplit: 1, xSplit: 4 }]
+    views: [{ state: "frozen", ySplit: 3, xSplit: 4 }]
   });
+
+  const rawCustomers = report.customerRevenueSections.map((s) => s.customer);
+  const customerNames = [...rawCustomers].sort((a, b) => a.localeCompare(b, "vi"));
+  const products = valueKind === "money" ? report.skuRevenueRows : report.skuQuantityRows;
+  const productNames = products.map((p) => p.label);
+  const valueFormat = valueKind === "money" ? MONEY_FORMAT : QUANTITY_FORMAT;
 
   // Set widths
   sheet.getColumn(1).width = 15;
@@ -500,59 +522,178 @@ function addCustomerWorksheet(
   sheet.getColumn(23).width = 16;
   for (let c = 24; c <= 30; c++) sheet.getColumn(c).width = 12;
 
-  // We write the blocks stacked.
-  // Each block starts with a customer header, then 52 product rows, then a spacer.
-  let currentRowNum = 1;
+  // --- DÒNG 1 (Customer Dropdown) ---
+  const r1 = sheet.getRow(1);
+  r1.getCell(1).value = "Customer";
+  r1.getCell(2).value = customerNames[0] ?? "";
 
-  for (const section of sections) {
-    // --- 1. DÒNG HEADER CHO KHÁCH HÀNG ---
-    const headerRow = sheet.getRow(currentRowNum);
-    headerRow.getCell(1).value = "Customer";
-    headerRow.getCell(2).value = section.customer;
-    headerRow.getCell(4).value = "Name SKU";
-    report.periodMonths.forEach((month, idx) => {
-      headerRow.getCell(5 + idx).value = displayMonth(month);
-    });
-    headerRow.getCell(22).value = report.previousYear;
-    headerRow.getCell(23).value = report.currentYear;
-    headerRow.getCell(24).value = "P3M";
-    headerRow.getCell(25).value = "P6M";
-    headerRow.getCell(26).value = "P9M";
-    headerRow.getCell(27).value = "TREND";
-    headerRow.getCell(28).value = "IFYTD";
-    headerRow.getCell(29).value = "ICYTD";
-    headerRow.getCell(30).value = "IYA";
+  r1.getCell(1).font = { bold: true, color: { argb: "FFFFFFFF" } };
+  r1.getCell(1).fill = HEADER_FILL;
+  r1.getCell(1).alignment = { vertical: "middle", horizontal: "center" };
+  r1.getCell(1).border = thinBorder();
 
-    styleCustomerHeader(headerRow);
-    currentRowNum++;
+  r1.getCell(2).font = { bold: true, color: { argb: "FF183B56" } };
+  r1.getCell(2).alignment = { vertical: "middle", horizontal: "left" };
+  r1.getCell(2).border = thinBorder();
 
-    // --- 2. GHI TOÀN BỘ CÁC DÒNG SKU CÓ GIAO DỊCH THỰC TẾ CỦA KHÁCH HÀNG ---
-    section.rows.forEach((rowData) => {
-      const excelRow = sheet.getRow(currentRowNum);
-      excelRow.getCell(4).value = rowData.label;
-
-      report.periodMonths.forEach((month, mIdx) => {
-        excelRow.getCell(5 + mIdx).value = rowData.monthValues[month] ?? 0;
-      });
-      excelRow.getCell(22).value = rowData.previousYearTotal;
-      excelRow.getCell(23).value = rowData.currentYearTotal;
-      excelRow.getCell(24).value = rowData.p3m;
-      excelRow.getCell(25).value = rowData.p6m;
-      excelRow.getCell(26).value = rowData.p9m;
-      excelRow.getCell(27).value = rowData.trend;
-      excelRow.getCell(28).value = rowData.ifytd;
-      excelRow.getCell(29).value = rowData.icytd;
-      excelRow.getCell(30).value = rowData.iya;
-
-      styleCustomerDataCells(excelRow);
-      formatCustomerProductRow(excelRow, valueFormat);
-      currentRowNum++;
-    });
-
-    // --- 3. DÒNG TRỐNG SPACER ---
-    sheet.getRow(currentRowNum).height = 15;
-    currentRowNum++;
+  if (customerNames.length > 0) {
+    r1.getCell(2).dataValidation = {
+      type: "list",
+      allowBlank: true,
+      formulae: [`Config!$A$2:$A$${customerNames.length + 1}`]
+    };
   }
+  r1.height = 24;
+
+  // --- DÒNG 2 (Dòng trống) ---
+  sheet.getRow(2).height = 15;
+
+  // --- DÒNG 3 (Header Bảng) ---
+  const headerRow = sheet.getRow(3);
+  headerRow.getCell(4).value = "Name SKU";
+  report.periodMonths.forEach((month, idx) => {
+    headerRow.getCell(5 + idx).value = displayMonth(month);
+  });
+  headerRow.getCell(22).value = report.previousYear;
+  headerRow.getCell(23).value = report.currentYear;
+  headerRow.getCell(24).value = "P3M";
+  headerRow.getCell(25).value = "P6M";
+  headerRow.getCell(26).value = "P9M";
+  headerRow.getCell(27).value = "TREND";
+  headerRow.getCell(28).value = "IFYTD";
+  headerRow.getCell(29).value = "ICYTD";
+  headerRow.getCell(30).value = "IYA";
+
+  for (const c of [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 23, 24, 25, 26, 27, 28, 29, 30]) {
+    const cell = headerRow.getCell(c);
+    cell.font = { bold: true, color: { argb: "FFFFFFFF" } };
+    cell.fill = HEADER_FILL;
+    cell.alignment = { vertical: "middle", horizontal: "center", wrapText: true };
+    cell.border = thinBorder();
+  }
+  headerRow.height = 24;
+
+  let currentRowNum = 4;
+
+  // --- CÁC DÒNG SKU DÙNG CÔNG THỨC SUMIFS ---
+  productNames.forEach((prodName) => {
+    const excelRow = sheet.getRow(currentRowNum);
+    excelRow.getCell(4).value = prodName;
+
+    report.periodMonths.forEach((month, mIdx) => {
+      const colLetter = getColumnLetter(5 + mIdx);
+      const dataCol = valueKind === "money" ? "J" : "H";
+      excelRow.getCell(5 + mIdx).value = {
+        formula: `SUMIFS('Data nguồn'!${dataCol}:${dataCol}, 'Data nguồn'!D:D, $B$1, 'Data nguồn'!F:F, $D${currentRowNum}, 'Data nguồn'!C:C, ${colLetter}$3)`
+      };
+    });
+
+    // Cột 22 (V - CY Y-1)
+    excelRow.getCell(22).value = {
+      formula: `SUM(${getColumnLetter(5)}${currentRowNum}:${getColumnLetter(16)}${currentRowNum})`
+    };
+
+    // Cột 23 (W - CY Y)
+    excelRow.getCell(23).value = {
+      formula: `SUM(${getColumnLetter(17)}${currentRowNum}:${getColumnLetter(5 + report.periodMonths.length - 1)}${currentRowNum})`
+    };
+
+    // Cột 24 (X - P3M)
+    excelRow.getCell(24).value = {
+      formula: `AVERAGE(${getColumnLetter(5 + report.periodMonths.length - 3)}${currentRowNum}:${getColumnLetter(5 + report.periodMonths.length - 1)}${currentRowNum})`
+    };
+
+    // Cột 25 (Y - P6M)
+    excelRow.getCell(25).value = {
+      formula: `AVERAGE(${getColumnLetter(5 + report.periodMonths.length - 6)}${currentRowNum}:${getColumnLetter(5 + report.periodMonths.length - 1)}${currentRowNum})`
+    };
+
+    // Cột 26 (Z - P9M)
+    excelRow.getCell(26).value = {
+      formula: `AVERAGE(${getColumnLetter(5 + report.periodMonths.length - 9)}${currentRowNum}:${getColumnLetter(5 + report.periodMonths.length - 1)}${currentRowNum})`
+    };
+
+    // Cột 27 (AA - TREND)
+    excelRow.getCell(27).value = {
+      formula: `IFERROR((X${currentRowNum}*2)/(Y${currentRowNum}+Z${currentRowNum}), 0)`
+    };
+
+    // Cột 28 (AB - IFYTD)
+    excelRow.getCell(28).value = {
+      formula: `IFERROR(W${currentRowNum}/SUM(${getColumnLetter(5)}${currentRowNum}:${getColumnLetter(5 + monthNumber(report.reportMonth) - 1)}${currentRowNum}), 0)`
+    };
+
+    // Cột 29 (AC - ICYTD)
+    excelRow.getCell(29).value = {
+      formula: `IFERROR(W${currentRowNum}/SUM(${getColumnLetter(5)}${currentRowNum}:${getColumnLetter(5 + monthNumber(report.reportMonth) - 1)}${currentRowNum}), 0)`
+    };
+
+    // Cột 30 (AD - IYA)
+    excelRow.getCell(30).value = {
+      formula: `IFERROR(${getColumnLetter(5 + report.periodMonths.length - 1)}${currentRowNum}/${getColumnLetter(5 + monthNumber(report.reportMonth) - 1)}${currentRowNum}, 0)`
+    };
+
+    styleCustomerDataCells(excelRow);
+    formatCustomerProductRow(excelRow, valueFormat);
+    excelRow.height = 20;
+    currentRowNum++;
+  });
+
+  // --- DÒNG GRAND TOTAL ---
+  const totalRow = sheet.getRow(currentRowNum);
+  totalRow.getCell(4).value = "TOTAL";
+
+  report.periodMonths.forEach((month, mIdx) => {
+    const colLetter = getColumnLetter(5 + mIdx);
+    totalRow.getCell(5 + mIdx).value = {
+      formula: `SUM(${colLetter}4:${colLetter}${currentRowNum - 1})`
+    };
+  });
+
+  totalRow.getCell(22).value = {
+    formula: `SUM(V4:V${currentRowNum - 1})`
+  };
+
+  totalRow.getCell(23).value = {
+    formula: `SUM(W4:W${currentRowNum - 1})`
+  };
+
+  totalRow.getCell(24).value = {
+    formula: `SUM(X4:X${currentRowNum - 1})`
+  };
+
+  totalRow.getCell(25).value = {
+    formula: `SUM(Y4:Y${currentRowNum - 1})`
+  };
+
+  totalRow.getCell(26).value = {
+    formula: `SUM(Z4:Z${currentRowNum - 1})`
+  };
+
+  totalRow.getCell(27).value = {
+    formula: `IFERROR((X${currentRowNum}*2)/(Y${currentRowNum}+Z${currentRowNum}), 0)`
+  };
+
+  totalRow.getCell(28).value = {
+    formula: `IFERROR(W${currentRowNum}/SUM(${getColumnLetter(5)}${currentRowNum}:${getColumnLetter(5 + monthNumber(report.reportMonth) - 1)}${currentRowNum}), 0)`
+  };
+
+  totalRow.getCell(29).value = {
+    formula: `IFERROR(W${currentRowNum}/SUM(${getColumnLetter(5)}${currentRowNum}:${getColumnLetter(5 + monthNumber(report.reportMonth) - 1)}${currentRowNum}), 0)`
+  };
+
+  totalRow.getCell(30).value = {
+    formula: `IFERROR(${getColumnLetter(5 + report.periodMonths.length - 1)}${currentRowNum}/${getColumnLetter(5 + monthNumber(report.reportMonth) - 1)}${currentRowNum}, 0)`
+  };
+
+  for (const c of [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 23, 24, 25, 26, 27, 28, 29, 30]) {
+    const cell = totalRow.getCell(c);
+    cell.font = { bold: true };
+    cell.fill = TOTAL_FILL;
+    cell.border = thinBorder();
+  }
+  formatCustomerProductRow(totalRow, valueFormat);
+  totalRow.height = 22;
 }
 
 function addSourceWorksheet(workbook: ExcelJS.Workbook, sourceRows: SourceTransaction[]): void {
